@@ -1,1 +1,1 @@
-# embedding-level-parameter-efficient-fine-tuning-alternative-to-LoRA-BS-AI-Thesis-
+# Embedding-level parameter efficient fine-tuning alternative to LoRA (BS AI Thesis)
