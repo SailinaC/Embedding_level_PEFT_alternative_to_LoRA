@@ -1,6 +1,6 @@
 # Investigating Embedding-Level Parameter-Efficient Fine-Tuning as an Alternative to LoRA
 
-This repository contains the codebase for my Bachelor's thesis in Artificial Intelligence at the University of Milano-Bicocca. The project investigates a highly constrained Parameter-Efficient Fine-Tuning (PEFT) method—specifically, an embedding-level "gradient masking" technique—as an alternative to Low-Rank Adaptation (LoRA) for Information Retrieval (IR) tasks.
+This repository contains the codebase for my Bachelor's thesis in Artificial Intelligence at the University of Milan. The project investigates a highly constrained Parameter-Efficient Fine-Tuning (PEFT) method—specifically, an embedding-level "gradient masking" technique—as an alternative to Low-Rank Adaptation (LoRA) for Information Retrieval (IR) tasks.
 
 ## Overview
 
