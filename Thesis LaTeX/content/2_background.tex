@@ -1,0 +1,47 @@
+\chapter{Background}
+\label{ch:background}
+
+This chapter provides the foundational concepts necessary to understand the methodology and experiments detailed in this thesis. It covers the core principles of Information Retrieval, the standard metrics used to evaluate search systems, and the underlying Transformer architectures that power modern neural text ranking models.
+
+\section{Information Retrieval}
+\label{sec:background_ir}
+
+Information Retrieval (IR) is the discipline concerned with finding material (usually documents) of an unstructured nature (usually text) that satisfies an information need from within large collections \cite{lin2021pretrained}. Modern search systems typically operate via a multi-stage retrieval pipeline designed to balance computational efficiency with ranking accuracy.
+
+The most common architecture is a two-stage pipeline consisting of:
+\begin{enumerate}
+    \item \textbf{First-Stage Retrieval (Candidate Generation):} This stage uses fast, computationally inexpensive algorithms to retrieve a relatively small subset (e.g., the top 100 or 1,000) of potentially relevant documents from a corpus of millions. Traditional lexical models like BM25, which rely on term frequency and inverse document frequency (TF-IDF), are often used here due to their speed and reliance on inverted indexes. Alternatively, dense retrievers using bi-encoders can perform this initial filtering by comparing pre-computed document embeddings using efficient similarity search.
+    \item \textbf{Second-Stage Re-ranking:} The initial candidate set is subsequently passed to a more computationally expensive, but significantly more accurate, model. Deep neural networks, specifically transformer-based cross-encoders, are utilized in this stage. These models evaluate the query and the document simultaneously, allowing for rich, fine-grained semantic interactions between the terms in both sequences to produce a final relevance score.
+\end{enumerate}
+
+This thesis focuses entirely on modifying and evaluating the training process for the models used in the second-stage re-ranking phase.
+
+\section{Evaluation Metrics}
+\label{sec:background_metrics}
+
+Evaluating the quality of an Information Retrieval system requires metrics that penalise models for placing relevant documents lower in the search results and reward them for placing highly relevant documents at the very top. The standard benchmark used in this work is BEIR (Benchmarking IR) \cite{thakur2021beir}. We rely on the following primary metrics:
+
+\subsection{Normalized Discounted Cumulative Gain (NDCG)}
+NDCG is the premier metric in IR because it accounts for graded relevance (e.g., a document can be "highly relevant", "somewhat relevant", or "not relevant"), and it heavily discounts the value of documents that appear lower in the ranking list. NDCG@$k$ is evaluated using only the top $k$ retrieved documents. It is calculated by dividing the Discounted Cumulative Gain (DCG) by the Ideal DCG (IDCG), ensuring the score is normalized between 0.0 and 1.0, where 1.0 represents perfect ranking.
+
+\subsection{Mean Reciprocal Rank (MRR)}
+MRR evaluating systems where there is predominantly one highly relevant correct answer or the user is only interested in the absolute first correct result. For a single query, the Reciprocal Rank is the multiplicative inverse of the rank of the first correct answer ($1/\text{rank}$). The Mean Reciprocal Rank (MRR@$k$) averages this score across all queries in an evaluation set, evaluating only up to the $k$-th position.
+
+\subsection{Recall}
+Recall measures the fraction of the total amount of relevant documents that were successfully retrieved in the top $k$ results (Recall@$k$). While not heavily dependent on strict ordering like NDCG and MRR, it is a crucial metric for evaluating the effectiveness of first-stage retrievers or the upper bound potential of a re-ranker.
+
+\section{Transformers and Large Language Models}
+\label{sec:background_transformers}
+
+The introduction of the Transformer architecture revolutionized natural language processing by dispensing with recurrence and convolutions entirely, instead relying on a self-attention mechanism. This mechanism allows the model to weigh the importance of different words in a sentence relative to one another, capturing complex contextual relationships over long sequences.
+
+This work builds upon BERT (Bidirectional Encoder Representations from Transformers) \cite{devlin2018bert}. Unlike directional models which process text left-to-right, BERT utilizes a bidirectional encoder to read the entire sequence of words at once. 
+
+For the task of textual ranking, BERT is typically configured as a **Cross-Encoder**. The input consists of the user query and the candidate document concatenated together, separated by special structural tokens:
+\begin{center}
+    \texttt{[CLS] Query Tokens [SEP] Document Tokens [SEP]}
+\end{center}
+
+During the forward pass, self-attention allows every token in the query to attend to every token in the document, capturing deep semantic interactions. The final contextualized embedding of the special \texttt{[CLS]} token is then extracted and passed through a linear layer and a softmax or sigmoid function to predict the probability that the document is relevant to the query \cite{nogueira2020document}.
+
+Due to the immense size of models like BERT, fine-tuning them for specific tasks like ranking is expensive. This has led to the development of Parameter-Efficient Fine-Tuning (PEFT) algorithms, such as LoRA \cite{hu2021lora}, which inject trainable low-rank matrices into the self-attention blocks while freezing the pre-trained weights, massively reducing the number of trainable parameters. This thesis explores whether similar or better efficiency can be achieved by isolating training solely to the \texttt{[CLS]} and \texttt{[SEP]} embeddings, rather than the attention mechanism.
