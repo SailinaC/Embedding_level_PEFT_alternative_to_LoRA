@@ -1,5 +1,3 @@
-
-```markdown
 # Embedding-Level PEFT for Information Retrieval
 
 This repository contains the code and experimental results for my thesis project on **embedding-level parameter-efficient fine-tuning (PEFT)** for passage re-ranking.
