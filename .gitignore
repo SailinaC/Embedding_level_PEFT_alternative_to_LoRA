@@ -1,0 +1,13 @@
+outputs/
+logs/
+*.pt
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.tsv
+*.tar.gz
+*.gz
+var/
+pyterrier_msmarco_passage_index/
+__pycache__/
+.ipynb_checkpoints/
