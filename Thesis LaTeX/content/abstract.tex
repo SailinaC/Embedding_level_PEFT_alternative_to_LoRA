@@ -1,8 +1,0 @@
-\chapter*{Abstract}
-\addcontentsline{toc}{chapter}{Abstract}
-
-This thesis investigates the efficacy of embedding-level parameter-efficient fine-tuning for Information Retrieval (IR) tasks, proposing an alternative to established methods like Low-Rank Adaptation (LoRA). Information Retrieval models, specifically those based on massive pre-trained language models like BERT and T5, often require significant computational resources for fine-tuning. We propose a gradient masking technique that selectively targets only the classification and separator tokens (\texttt{[CLS]} and \texttt{[SEP]}) during training on the MS MARCO dataset, freezing the rest of the network parameters. We evaluate this approach against a baseline LoRA implementation and standard MonoBERT, assessing performance using the BEIR benchmark with metrics such as NDCG@10 and MRR@10. The goal is to determine whether highly targeted embedding tuning can match the ranking performance of traditional parameter-efficient methods while further reducing the trainable parameter footprint.
-
-\textit{(Abstract to be finalized after experimental results are obtained.)}
-
-\keywords{Information Retrieval, Large Language Models, Parameter-Efficient Fine-Tuning, BERT, BEIR, Prompt Embedding, LoRA}
