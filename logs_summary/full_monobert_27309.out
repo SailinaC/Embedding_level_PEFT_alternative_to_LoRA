@@ -1,0 +1,94 @@
+Using device: cuda
+Document table: docs
+Document id column: id
+Document text column: text
+Loaded queries: 808731
+Trainable parameters: 335143938
+Total model parameters: 335143938
+Trainable percentage: 100.0
+Batch size: 8
+Accumulation steps: 16
+Effective batch size: 128
+Step 100/100000 | loss = 0.7127
+Step 200/100000 | loss = 0.7078
+Step 300/100000 | loss = 0.7046
+Step 400/100000 | loss = 0.7009
+Step 500/100000 | loss = 0.6788
+Step 600/100000 | loss = 0.6489
+Step 700/100000 | loss = 0.6301
+Step 800/100000 | loss = 0.5911
+Step 900/100000 | loss = 0.5757
+Step 1000/100000 | loss = 0.5484
+Step 1100/100000 | loss = 0.5059
+Step 1200/100000 | loss = 0.4871
+Step 1300/100000 | loss = 0.4454
+Step 1400/100000 | loss = 0.4578
+Step 1500/100000 | loss = 0.3983
+Step 1600/100000 | loss = 0.3690
+Step 1700/100000 | loss = 0.3642
+Step 1800/100000 | loss = 0.3318
+Step 1900/100000 | loss = 0.3312
+Step 2000/100000 | loss = 0.3342
+Saved checkpoint at step 2000: outputs/full_monobert/latest/checkpoint.pt
+Step 2100/100000 | loss = 0.3219
+Step 2200/100000 | loss = 0.3079
+Step 2300/100000 | loss = 0.3051
+Step 2400/100000 | loss = 0.2709
+Step 2500/100000 | loss = 0.2917
+Step 2600/100000 | loss = 0.2767
+Step 2700/100000 | loss = 0.2674
+Step 2800/100000 | loss = 0.2647
+Step 2900/100000 | loss = 0.2482
+Step 3000/100000 | loss = 0.2731
+Step 3100/100000 | loss = 0.2160
+Step 3200/100000 | loss = 0.2296
+Step 3300/100000 | loss = 0.2506
+Step 3400/100000 | loss = 0.2800
+Step 3500/100000 | loss = 0.2403
+Step 3600/100000 | loss = 0.2383
+Step 3700/100000 | loss = 0.2362
+Step 3800/100000 | loss = 0.2176
+Step 3900/100000 | loss = 0.2409
+Step 4000/100000 | loss = 0.2016
+Saved checkpoint at step 4000: outputs/full_monobert/latest/checkpoint.pt
+Step 4100/100000 | loss = 0.2384
+Step 4200/100000 | loss = 0.2383
+Step 4300/100000 | loss = 0.2061
+Step 4400/100000 | loss = 0.2247
+Step 4500/100000 | loss = 0.2254
+Step 4600/100000 | loss = 0.2014
+Step 4700/100000 | loss = 0.2086
+Step 4800/100000 | loss = 0.2409
+Step 4900/100000 | loss = 0.1954
+Step 5000/100000 | loss = 0.2244
+Step 5100/100000 | loss = 0.1978
+Step 5200/100000 | loss = 0.2140
+Step 5300/100000 | loss = 0.2026
+Step 5400/100000 | loss = 0.2023
+Step 5500/100000 | loss = 0.2088
+Step 5600/100000 | loss = 0.1967
+Step 5700/100000 | loss = 0.2361
+Step 5800/100000 | loss = 0.2415
+Step 5900/100000 | loss = 0.1854
+Step 6000/100000 | loss = 0.2367
+Saved checkpoint at step 6000: outputs/full_monobert/latest/checkpoint.pt
+Step 6100/100000 | loss = 0.2023
+Step 6200/100000 | loss = 0.1645
+Step 6300/100000 | loss = 0.1722
+Step 6400/100000 | loss = 0.2194
+Step 6500/100000 | loss = 0.2126
+Step 6600/100000 | loss = 0.2203
+Step 6700/100000 | loss = 0.1767
+Step 6800/100000 | loss = 0.1578
+Step 6900/100000 | loss = 0.1929
+Step 7000/100000 | loss = 0.1925
+Step 7100/100000 | loss = 0.1603
+Step 7200/100000 | loss = 0.1757
+Step 7300/100000 | loss = 0.1791
+Step 7400/100000 | loss = 0.1904
+Step 7500/100000 | loss = 0.2142
+Step 7600/100000 | loss = 0.2071
+Step 7700/100000 | loss = 0.2136
+Step 7800/100000 | loss = 0.2072
+Step 7900/100000 | loss = 0.2229
+Step 8000/100000 | loss = 0.1987

@@ -1,0 +1,793 @@
+Document table: docs
+Document id column: id
+Document text column: text
+Using device: cuda
+Checkpoint: outputs/approach7_all_embeddings_except_cls_sep/final/trainable_checkpoint.pt
+Evaluating: msmarco-passage/trec-dl-2019/judged
+Queries: 43
+Queries with qrels: 43
+Queries with candidates: 43
+Evaluated queries: 10 / 43
+Evaluated queries: 20 / 43
+Evaluated queries: 30 / 43
+Evaluated queries: 40 / 43
+Evaluated queries: 43 / 43
+{
+  "approach": "All embeddings except CLS/SEP",
+  "dataset": "msmarco-passage/trec-dl-2019/judged",
+  "top_k": 1000,
+  "max_length": 128,
+  "batch_size": 64,
+  "metrics": {
+    "NDCG@10": 0.027448218884203072,
+    "MRR@10": 0.03972868217054264,
+    "MAP@1000": 0.1099396712671284,
+    "Recall@100": 0.13695586340853458,
+    "evaluated_queries": 43
+  }
+}
+Evaluating: msmarco-passage/trec-dl-2020/judged
+Queries: 54
+Queries with qrels: 54
+Queries with candidates: 54
+Evaluated queries: 10 / 54
+Evaluated queries: 20 / 54
+Evaluated queries: 30 / 54
+Evaluated queries: 40 / 54
+Evaluated queries: 50 / 54
+Evaluated queries: 54 / 54
+{
+  "approach": "All embeddings except CLS/SEP",
+  "dataset": "msmarco-passage/trec-dl-2020/judged",
+  "top_k": 1000,
+  "max_length": 128,
+  "batch_size": 64,
+  "metrics": {
+    "NDCG@10": 0.012344076050175354,
+    "MRR@10": 0.02160493827160494,
+    "MAP@1000": 0.08115244075999645,
+    "Recall@100": 0.16551179018467102,
+    "evaluated_queries": 54
+  }
+}
+Evaluating: msmarco-passage/dev/small
+Queries: 6980
+Queries with qrels: 6980
+Queries with candidates: 6980
+Evaluated queries: 10 / 6980
+Evaluated queries: 20 / 6980
+Evaluated queries: 30 / 6980
+Evaluated queries: 40 / 6980
+Evaluated queries: 50 / 6980
+Evaluated queries: 60 / 6980
+Evaluated queries: 70 / 6980
+Evaluated queries: 80 / 6980
+Evaluated queries: 90 / 6980
+Evaluated queries: 100 / 6980
+Evaluated queries: 110 / 6980
+Evaluated queries: 120 / 6980
+Evaluated queries: 130 / 6980
+Evaluated queries: 140 / 6980
+Evaluated queries: 150 / 6980
+Evaluated queries: 160 / 6980
+Evaluated queries: 170 / 6980
+Evaluated queries: 180 / 6980
+Evaluated queries: 190 / 6980
+Evaluated queries: 200 / 6980
+Evaluated queries: 210 / 6980
+Evaluated queries: 220 / 6980
+Evaluated queries: 230 / 6980
+Evaluated queries: 240 / 6980
+Evaluated queries: 250 / 6980
+Evaluated queries: 260 / 6980
+Evaluated queries: 270 / 6980
+Evaluated queries: 280 / 6980
+Evaluated queries: 290 / 6980
+Evaluated queries: 300 / 6980
+Evaluated queries: 310 / 6980
+Evaluated queries: 320 / 6980
+Evaluated queries: 330 / 6980
+Evaluated queries: 340 / 6980
+Evaluated queries: 350 / 6980
+Evaluated queries: 360 / 6980
+Evaluated queries: 370 / 6980
+Evaluated queries: 380 / 6980
+Evaluated queries: 390 / 6980
+Evaluated queries: 400 / 6980
+Evaluated queries: 410 / 6980
+Evaluated queries: 420 / 6980
+Evaluated queries: 430 / 6980
+Evaluated queries: 440 / 6980
+Evaluated queries: 450 / 6980
+Evaluated queries: 460 / 6980
+Evaluated queries: 470 / 6980
+Evaluated queries: 480 / 6980
+Evaluated queries: 490 / 6980
+Evaluated queries: 500 / 6980
+Evaluated queries: 510 / 6980
+Evaluated queries: 520 / 6980
+Evaluated queries: 530 / 6980
+Evaluated queries: 540 / 6980
+Evaluated queries: 550 / 6980
+Evaluated queries: 560 / 6980
+Evaluated queries: 570 / 6980
+Evaluated queries: 580 / 6980
+Evaluated queries: 590 / 6980
+Evaluated queries: 600 / 6980
+Evaluated queries: 610 / 6980
+Evaluated queries: 620 / 6980
+Evaluated queries: 630 / 6980
+Evaluated queries: 640 / 6980
+Evaluated queries: 650 / 6980
+Evaluated queries: 660 / 6980
+Evaluated queries: 670 / 6980
+Evaluated queries: 680 / 6980
+Evaluated queries: 690 / 6980
+Evaluated queries: 700 / 6980
+Evaluated queries: 710 / 6980
+Evaluated queries: 720 / 6980
+Evaluated queries: 730 / 6980
+Evaluated queries: 740 / 6980
+Evaluated queries: 750 / 6980
+Evaluated queries: 760 / 6980
+Evaluated queries: 770 / 6980
+Evaluated queries: 780 / 6980
+Evaluated queries: 790 / 6980
+Evaluated queries: 800 / 6980
+Evaluated queries: 810 / 6980
+Evaluated queries: 820 / 6980
+Evaluated queries: 830 / 6980
+Evaluated queries: 840 / 6980
+Evaluated queries: 850 / 6980
+Evaluated queries: 860 / 6980
+Evaluated queries: 870 / 6980
+Evaluated queries: 880 / 6980
+Evaluated queries: 890 / 6980
+Evaluated queries: 900 / 6980
+Evaluated queries: 910 / 6980
+Evaluated queries: 920 / 6980
+Evaluated queries: 930 / 6980
+Evaluated queries: 940 / 6980
+Evaluated queries: 950 / 6980
+Evaluated queries: 960 / 6980
+Evaluated queries: 970 / 6980
+Evaluated queries: 980 / 6980
+Evaluated queries: 990 / 6980
+Evaluated queries: 1000 / 6980
+Evaluated queries: 1010 / 6980
+Evaluated queries: 1020 / 6980
+Evaluated queries: 1030 / 6980
+Evaluated queries: 1040 / 6980
+Evaluated queries: 1050 / 6980
+Evaluated queries: 1060 / 6980
+Evaluated queries: 1070 / 6980
+Evaluated queries: 1080 / 6980
+Evaluated queries: 1090 / 6980
+Evaluated queries: 1100 / 6980
+Evaluated queries: 1110 / 6980
+Evaluated queries: 1120 / 6980
+Evaluated queries: 1130 / 6980
+Evaluated queries: 1140 / 6980
+Evaluated queries: 1150 / 6980
+Evaluated queries: 1160 / 6980
+Evaluated queries: 1170 / 6980
+Evaluated queries: 1180 / 6980
+Evaluated queries: 1190 / 6980
+Evaluated queries: 1200 / 6980
+Evaluated queries: 1210 / 6980
+Evaluated queries: 1220 / 6980
+Evaluated queries: 1230 / 6980
+Evaluated queries: 1240 / 6980
+Evaluated queries: 1250 / 6980
+Evaluated queries: 1260 / 6980
+Evaluated queries: 1270 / 6980
+Evaluated queries: 1280 / 6980
+Evaluated queries: 1290 / 6980
+Evaluated queries: 1300 / 6980
+Evaluated queries: 1310 / 6980
+Evaluated queries: 1320 / 6980
+Evaluated queries: 1330 / 6980
+Evaluated queries: 1340 / 6980
+Evaluated queries: 1350 / 6980
+Evaluated queries: 1360 / 6980
+Evaluated queries: 1370 / 6980
+Evaluated queries: 1380 / 6980
+Evaluated queries: 1390 / 6980
+Evaluated queries: 1400 / 6980
+Evaluated queries: 1410 / 6980
+Evaluated queries: 1420 / 6980
+Evaluated queries: 1430 / 6980
+Evaluated queries: 1440 / 6980
+Evaluated queries: 1450 / 6980
+Evaluated queries: 1460 / 6980
+Evaluated queries: 1470 / 6980
+Evaluated queries: 1480 / 6980
+Evaluated queries: 1490 / 6980
+Evaluated queries: 1500 / 6980
+Evaluated queries: 1510 / 6980
+Evaluated queries: 1520 / 6980
+Evaluated queries: 1530 / 6980
+Evaluated queries: 1540 / 6980
+Evaluated queries: 1550 / 6980
+Evaluated queries: 1560 / 6980
+Evaluated queries: 1570 / 6980
+Evaluated queries: 1580 / 6980
+Evaluated queries: 1590 / 6980
+Evaluated queries: 1600 / 6980
+Evaluated queries: 1610 / 6980
+Evaluated queries: 1620 / 6980
+Evaluated queries: 1630 / 6980
+Evaluated queries: 1640 / 6980
+Evaluated queries: 1650 / 6980
+Evaluated queries: 1660 / 6980
+Evaluated queries: 1670 / 6980
+Evaluated queries: 1680 / 6980
+Evaluated queries: 1690 / 6980
+Evaluated queries: 1700 / 6980
+Evaluated queries: 1710 / 6980
+Evaluated queries: 1720 / 6980
+Evaluated queries: 1730 / 6980
+Evaluated queries: 1740 / 6980
+Evaluated queries: 1750 / 6980
+Evaluated queries: 1760 / 6980
+Evaluated queries: 1770 / 6980
+Evaluated queries: 1780 / 6980
+Evaluated queries: 1790 / 6980
+Evaluated queries: 1800 / 6980
+Evaluated queries: 1810 / 6980
+Evaluated queries: 1820 / 6980
+Evaluated queries: 1830 / 6980
+Evaluated queries: 1840 / 6980
+Evaluated queries: 1850 / 6980
+Evaluated queries: 1860 / 6980
+Evaluated queries: 1870 / 6980
+Evaluated queries: 1880 / 6980
+Evaluated queries: 1890 / 6980
+Evaluated queries: 1900 / 6980
+Evaluated queries: 1910 / 6980
+Evaluated queries: 1920 / 6980
+Evaluated queries: 1930 / 6980
+Evaluated queries: 1940 / 6980
+Evaluated queries: 1950 / 6980
+Evaluated queries: 1960 / 6980
+Evaluated queries: 1970 / 6980
+Evaluated queries: 1980 / 6980
+Evaluated queries: 1990 / 6980
+Evaluated queries: 2000 / 6980
+Evaluated queries: 2010 / 6980
+Evaluated queries: 2020 / 6980
+Evaluated queries: 2030 / 6980
+Evaluated queries: 2040 / 6980
+Evaluated queries: 2050 / 6980
+Evaluated queries: 2060 / 6980
+Evaluated queries: 2070 / 6980
+Evaluated queries: 2080 / 6980
+Evaluated queries: 2090 / 6980
+Evaluated queries: 2100 / 6980
+Evaluated queries: 2110 / 6980
+Evaluated queries: 2120 / 6980
+Evaluated queries: 2130 / 6980
+Evaluated queries: 2140 / 6980
+Evaluated queries: 2150 / 6980
+Evaluated queries: 2160 / 6980
+Evaluated queries: 2170 / 6980
+Evaluated queries: 2180 / 6980
+Evaluated queries: 2190 / 6980
+Evaluated queries: 2200 / 6980
+Evaluated queries: 2210 / 6980
+Evaluated queries: 2220 / 6980
+Evaluated queries: 2230 / 6980
+Evaluated queries: 2240 / 6980
+Evaluated queries: 2250 / 6980
+Evaluated queries: 2260 / 6980
+Evaluated queries: 2270 / 6980
+Evaluated queries: 2280 / 6980
+Evaluated queries: 2290 / 6980
+Evaluated queries: 2300 / 6980
+Evaluated queries: 2310 / 6980
+Evaluated queries: 2320 / 6980
+Evaluated queries: 2330 / 6980
+Evaluated queries: 2340 / 6980
+Evaluated queries: 2350 / 6980
+Evaluated queries: 2360 / 6980
+Evaluated queries: 2370 / 6980
+Evaluated queries: 2380 / 6980
+Evaluated queries: 2390 / 6980
+Evaluated queries: 2400 / 6980
+Evaluated queries: 2410 / 6980
+Evaluated queries: 2420 / 6980
+Evaluated queries: 2430 / 6980
+Evaluated queries: 2440 / 6980
+Evaluated queries: 2450 / 6980
+Evaluated queries: 2460 / 6980
+Evaluated queries: 2470 / 6980
+Evaluated queries: 2480 / 6980
+Evaluated queries: 2490 / 6980
+Evaluated queries: 2500 / 6980
+Evaluated queries: 2510 / 6980
+Evaluated queries: 2520 / 6980
+Evaluated queries: 2530 / 6980
+Evaluated queries: 2540 / 6980
+Evaluated queries: 2550 / 6980
+Evaluated queries: 2560 / 6980
+Evaluated queries: 2570 / 6980
+Evaluated queries: 2580 / 6980
+Evaluated queries: 2590 / 6980
+Evaluated queries: 2600 / 6980
+Evaluated queries: 2610 / 6980
+Evaluated queries: 2620 / 6980
+Evaluated queries: 2630 / 6980
+Evaluated queries: 2640 / 6980
+Evaluated queries: 2650 / 6980
+Evaluated queries: 2660 / 6980
+Evaluated queries: 2670 / 6980
+Evaluated queries: 2680 / 6980
+Evaluated queries: 2690 / 6980
+Evaluated queries: 2700 / 6980
+Evaluated queries: 2710 / 6980
+Evaluated queries: 2720 / 6980
+Evaluated queries: 2730 / 6980
+Evaluated queries: 2740 / 6980
+Evaluated queries: 2750 / 6980
+Evaluated queries: 2760 / 6980
+Evaluated queries: 2770 / 6980
+Evaluated queries: 2780 / 6980
+Evaluated queries: 2790 / 6980
+Evaluated queries: 2800 / 6980
+Evaluated queries: 2810 / 6980
+Evaluated queries: 2820 / 6980
+Evaluated queries: 2830 / 6980
+Evaluated queries: 2840 / 6980
+Evaluated queries: 2850 / 6980
+Evaluated queries: 2860 / 6980
+Evaluated queries: 2870 / 6980
+Evaluated queries: 2880 / 6980
+Evaluated queries: 2890 / 6980
+Evaluated queries: 2900 / 6980
+Evaluated queries: 2910 / 6980
+Evaluated queries: 2920 / 6980
+Evaluated queries: 2930 / 6980
+Evaluated queries: 2940 / 6980
+Evaluated queries: 2950 / 6980
+Evaluated queries: 2960 / 6980
+Evaluated queries: 2970 / 6980
+Evaluated queries: 2980 / 6980
+Evaluated queries: 2990 / 6980
+Evaluated queries: 3000 / 6980
+Evaluated queries: 3010 / 6980
+Evaluated queries: 3020 / 6980
+Evaluated queries: 3030 / 6980
+Evaluated queries: 3040 / 6980
+Evaluated queries: 3050 / 6980
+Evaluated queries: 3060 / 6980
+Evaluated queries: 3070 / 6980
+Evaluated queries: 3080 / 6980
+Evaluated queries: 3090 / 6980
+Evaluated queries: 3100 / 6980
+Evaluated queries: 3110 / 6980
+Evaluated queries: 3120 / 6980
+Evaluated queries: 3130 / 6980
+Evaluated queries: 3140 / 6980
+Evaluated queries: 3150 / 6980
+Evaluated queries: 3160 / 6980
+Evaluated queries: 3170 / 6980
+Evaluated queries: 3180 / 6980
+Evaluated queries: 3190 / 6980
+Evaluated queries: 3200 / 6980
+Evaluated queries: 3210 / 6980
+Evaluated queries: 3220 / 6980
+Evaluated queries: 3230 / 6980
+Evaluated queries: 3240 / 6980
+Evaluated queries: 3250 / 6980
+Evaluated queries: 3260 / 6980
+Evaluated queries: 3270 / 6980
+Evaluated queries: 3280 / 6980
+Evaluated queries: 3290 / 6980
+Evaluated queries: 3300 / 6980
+Evaluated queries: 3310 / 6980
+Evaluated queries: 3320 / 6980
+Evaluated queries: 3330 / 6980
+Evaluated queries: 3340 / 6980
+Evaluated queries: 3350 / 6980
+Evaluated queries: 3360 / 6980
+Evaluated queries: 3370 / 6980
+Evaluated queries: 3380 / 6980
+Evaluated queries: 3390 / 6980
+Evaluated queries: 3400 / 6980
+Evaluated queries: 3410 / 6980
+Evaluated queries: 3420 / 6980
+Evaluated queries: 3430 / 6980
+Evaluated queries: 3440 / 6980
+Evaluated queries: 3450 / 6980
+Evaluated queries: 3460 / 6980
+Evaluated queries: 3470 / 6980
+Evaluated queries: 3480 / 6980
+Evaluated queries: 3490 / 6980
+Evaluated queries: 3500 / 6980
+Evaluated queries: 3510 / 6980
+Evaluated queries: 3520 / 6980
+Evaluated queries: 3530 / 6980
+Evaluated queries: 3540 / 6980
+Evaluated queries: 3550 / 6980
+Evaluated queries: 3560 / 6980
+Evaluated queries: 3570 / 6980
+Evaluated queries: 3580 / 6980
+Evaluated queries: 3590 / 6980
+Evaluated queries: 3600 / 6980
+Evaluated queries: 3610 / 6980
+Evaluated queries: 3620 / 6980
+Evaluated queries: 3630 / 6980
+Evaluated queries: 3640 / 6980
+Evaluated queries: 3650 / 6980
+Evaluated queries: 3660 / 6980
+Evaluated queries: 3670 / 6980
+Evaluated queries: 3680 / 6980
+Evaluated queries: 3690 / 6980
+Evaluated queries: 3700 / 6980
+Evaluated queries: 3710 / 6980
+Evaluated queries: 3720 / 6980
+Evaluated queries: 3730 / 6980
+Evaluated queries: 3740 / 6980
+Evaluated queries: 3750 / 6980
+Evaluated queries: 3760 / 6980
+Evaluated queries: 3770 / 6980
+Evaluated queries: 3780 / 6980
+Evaluated queries: 3790 / 6980
+Evaluated queries: 3800 / 6980
+Evaluated queries: 3810 / 6980
+Evaluated queries: 3820 / 6980
+Evaluated queries: 3830 / 6980
+Evaluated queries: 3840 / 6980
+Evaluated queries: 3850 / 6980
+Evaluated queries: 3860 / 6980
+Evaluated queries: 3870 / 6980
+Evaluated queries: 3880 / 6980
+Evaluated queries: 3890 / 6980
+Evaluated queries: 3900 / 6980
+Evaluated queries: 3910 / 6980
+Evaluated queries: 3920 / 6980
+Evaluated queries: 3930 / 6980
+Evaluated queries: 3940 / 6980
+Evaluated queries: 3950 / 6980
+Evaluated queries: 3960 / 6980
+Evaluated queries: 3970 / 6980
+Evaluated queries: 3980 / 6980
+Evaluated queries: 3990 / 6980
+Evaluated queries: 4000 / 6980
+Evaluated queries: 4010 / 6980
+Evaluated queries: 4020 / 6980
+Evaluated queries: 4030 / 6980
+Evaluated queries: 4040 / 6980
+Evaluated queries: 4050 / 6980
+Evaluated queries: 4060 / 6980
+Evaluated queries: 4070 / 6980
+Evaluated queries: 4080 / 6980
+Evaluated queries: 4090 / 6980
+Evaluated queries: 4100 / 6980
+Evaluated queries: 4110 / 6980
+Evaluated queries: 4120 / 6980
+Evaluated queries: 4130 / 6980
+Evaluated queries: 4140 / 6980
+Evaluated queries: 4150 / 6980
+Evaluated queries: 4160 / 6980
+Evaluated queries: 4170 / 6980
+Evaluated queries: 4180 / 6980
+Evaluated queries: 4190 / 6980
+Evaluated queries: 4200 / 6980
+Evaluated queries: 4210 / 6980
+Evaluated queries: 4220 / 6980
+Evaluated queries: 4230 / 6980
+Evaluated queries: 4240 / 6980
+Evaluated queries: 4250 / 6980
+Evaluated queries: 4260 / 6980
+Evaluated queries: 4270 / 6980
+Evaluated queries: 4280 / 6980
+Evaluated queries: 4290 / 6980
+Evaluated queries: 4300 / 6980
+Evaluated queries: 4310 / 6980
+Evaluated queries: 4320 / 6980
+Evaluated queries: 4330 / 6980
+Evaluated queries: 4340 / 6980
+Evaluated queries: 4350 / 6980
+Evaluated queries: 4360 / 6980
+Evaluated queries: 4370 / 6980
+Evaluated queries: 4380 / 6980
+Evaluated queries: 4390 / 6980
+Evaluated queries: 4400 / 6980
+Evaluated queries: 4410 / 6980
+Evaluated queries: 4420 / 6980
+Evaluated queries: 4430 / 6980
+Evaluated queries: 4440 / 6980
+Evaluated queries: 4450 / 6980
+Evaluated queries: 4460 / 6980
+Evaluated queries: 4470 / 6980
+Evaluated queries: 4480 / 6980
+Evaluated queries: 4490 / 6980
+Evaluated queries: 4500 / 6980
+Evaluated queries: 4510 / 6980
+Evaluated queries: 4520 / 6980
+Evaluated queries: 4530 / 6980
+Evaluated queries: 4540 / 6980
+Evaluated queries: 4550 / 6980
+Evaluated queries: 4560 / 6980
+Evaluated queries: 4570 / 6980
+Evaluated queries: 4580 / 6980
+Evaluated queries: 4590 / 6980
+Evaluated queries: 4600 / 6980
+Evaluated queries: 4610 / 6980
+Evaluated queries: 4620 / 6980
+Evaluated queries: 4630 / 6980
+Evaluated queries: 4640 / 6980
+Evaluated queries: 4650 / 6980
+Evaluated queries: 4660 / 6980
+Evaluated queries: 4670 / 6980
+Evaluated queries: 4680 / 6980
+Evaluated queries: 4690 / 6980
+Evaluated queries: 4700 / 6980
+Evaluated queries: 4710 / 6980
+Evaluated queries: 4720 / 6980
+Evaluated queries: 4730 / 6980
+Evaluated queries: 4740 / 6980
+Evaluated queries: 4750 / 6980
+Evaluated queries: 4760 / 6980
+Evaluated queries: 4770 / 6980
+Evaluated queries: 4780 / 6980
+Evaluated queries: 4790 / 6980
+Evaluated queries: 4800 / 6980
+Evaluated queries: 4810 / 6980
+Evaluated queries: 4820 / 6980
+Evaluated queries: 4830 / 6980
+Evaluated queries: 4840 / 6980
+Evaluated queries: 4850 / 6980
+Evaluated queries: 4860 / 6980
+Evaluated queries: 4870 / 6980
+Evaluated queries: 4880 / 6980
+Evaluated queries: 4890 / 6980
+Evaluated queries: 4900 / 6980
+Evaluated queries: 4910 / 6980
+Evaluated queries: 4920 / 6980
+Evaluated queries: 4930 / 6980
+Evaluated queries: 4940 / 6980
+Evaluated queries: 4950 / 6980
+Evaluated queries: 4960 / 6980
+Evaluated queries: 4970 / 6980
+Evaluated queries: 4980 / 6980
+Evaluated queries: 4990 / 6980
+Evaluated queries: 5000 / 6980
+Evaluated queries: 5010 / 6980
+Evaluated queries: 5020 / 6980
+Evaluated queries: 5030 / 6980
+Evaluated queries: 5040 / 6980
+Evaluated queries: 5050 / 6980
+Evaluated queries: 5060 / 6980
+Evaluated queries: 5070 / 6980
+Evaluated queries: 5080 / 6980
+Evaluated queries: 5090 / 6980
+Evaluated queries: 5100 / 6980
+Evaluated queries: 5110 / 6980
+Evaluated queries: 5120 / 6980
+Evaluated queries: 5130 / 6980
+Evaluated queries: 5140 / 6980
+Evaluated queries: 5150 / 6980
+Evaluated queries: 5160 / 6980
+Evaluated queries: 5170 / 6980
+Evaluated queries: 5180 / 6980
+Evaluated queries: 5190 / 6980
+Evaluated queries: 5200 / 6980
+Evaluated queries: 5210 / 6980
+Evaluated queries: 5220 / 6980
+Evaluated queries: 5230 / 6980
+Evaluated queries: 5240 / 6980
+Evaluated queries: 5250 / 6980
+Evaluated queries: 5260 / 6980
+Evaluated queries: 5270 / 6980
+Evaluated queries: 5280 / 6980
+Evaluated queries: 5290 / 6980
+Evaluated queries: 5300 / 6980
+Evaluated queries: 5310 / 6980
+Evaluated queries: 5320 / 6980
+Evaluated queries: 5330 / 6980
+Evaluated queries: 5340 / 6980
+Evaluated queries: 5350 / 6980
+Evaluated queries: 5360 / 6980
+Evaluated queries: 5370 / 6980
+Evaluated queries: 5380 / 6980
+Evaluated queries: 5390 / 6980
+Evaluated queries: 5400 / 6980
+Evaluated queries: 5410 / 6980
+Evaluated queries: 5420 / 6980
+Evaluated queries: 5430 / 6980
+Evaluated queries: 5440 / 6980
+Evaluated queries: 5450 / 6980
+Evaluated queries: 5460 / 6980
+Evaluated queries: 5470 / 6980
+Evaluated queries: 5480 / 6980
+Evaluated queries: 5490 / 6980
+Evaluated queries: 5500 / 6980
+Evaluated queries: 5510 / 6980
+Evaluated queries: 5520 / 6980
+Evaluated queries: 5530 / 6980
+Evaluated queries: 5540 / 6980
+Evaluated queries: 5550 / 6980
+Evaluated queries: 5560 / 6980
+Evaluated queries: 5570 / 6980
+Evaluated queries: 5580 / 6980
+Evaluated queries: 5590 / 6980
+Evaluated queries: 5600 / 6980
+Evaluated queries: 5610 / 6980
+Evaluated queries: 5620 / 6980
+Evaluated queries: 5630 / 6980
+Evaluated queries: 5640 / 6980
+Evaluated queries: 5650 / 6980
+Evaluated queries: 5660 / 6980
+Evaluated queries: 5670 / 6980
+Evaluated queries: 5680 / 6980
+Evaluated queries: 5690 / 6980
+Evaluated queries: 5700 / 6980
+Evaluated queries: 5710 / 6980
+Evaluated queries: 5720 / 6980
+Evaluated queries: 5730 / 6980
+Evaluated queries: 5740 / 6980
+Evaluated queries: 5750 / 6980
+Evaluated queries: 5760 / 6980
+Evaluated queries: 5770 / 6980
+Evaluated queries: 5780 / 6980
+Evaluated queries: 5790 / 6980
+Evaluated queries: 5800 / 6980
+Evaluated queries: 5810 / 6980
+Evaluated queries: 5820 / 6980
+Evaluated queries: 5830 / 6980
+Evaluated queries: 5840 / 6980
+Evaluated queries: 5850 / 6980
+Evaluated queries: 5860 / 6980
+Evaluated queries: 5870 / 6980
+Evaluated queries: 5880 / 6980
+Evaluated queries: 5890 / 6980
+Evaluated queries: 5900 / 6980
+Evaluated queries: 5910 / 6980
+Evaluated queries: 5920 / 6980
+Evaluated queries: 5930 / 6980
+Evaluated queries: 5940 / 6980
+Evaluated queries: 5950 / 6980
+Evaluated queries: 5960 / 6980
+Evaluated queries: 5970 / 6980
+Evaluated queries: 5980 / 6980
+Evaluated queries: 5990 / 6980
+Evaluated queries: 6000 / 6980
+Evaluated queries: 6010 / 6980
+Evaluated queries: 6020 / 6980
+Evaluated queries: 6030 / 6980
+Evaluated queries: 6040 / 6980
+Evaluated queries: 6050 / 6980
+Evaluated queries: 6060 / 6980
+Evaluated queries: 6070 / 6980
+Evaluated queries: 6080 / 6980
+Evaluated queries: 6090 / 6980
+Evaluated queries: 6100 / 6980
+Evaluated queries: 6110 / 6980
+Evaluated queries: 6120 / 6980
+Evaluated queries: 6130 / 6980
+Evaluated queries: 6140 / 6980
+Evaluated queries: 6150 / 6980
+Evaluated queries: 6160 / 6980
+Evaluated queries: 6170 / 6980
+Evaluated queries: 6180 / 6980
+Evaluated queries: 6190 / 6980
+Evaluated queries: 6200 / 6980
+Evaluated queries: 6210 / 6980
+Evaluated queries: 6220 / 6980
+Evaluated queries: 6230 / 6980
+Evaluated queries: 6240 / 6980
+Evaluated queries: 6250 / 6980
+Evaluated queries: 6260 / 6980
+Evaluated queries: 6270 / 6980
+Evaluated queries: 6280 / 6980
+Evaluated queries: 6290 / 6980
+Evaluated queries: 6300 / 6980
+Evaluated queries: 6310 / 6980
+Evaluated queries: 6320 / 6980
+Evaluated queries: 6330 / 6980
+Evaluated queries: 6340 / 6980
+Evaluated queries: 6350 / 6980
+Evaluated queries: 6360 / 6980
+Evaluated queries: 6370 / 6980
+Evaluated queries: 6380 / 6980
+Evaluated queries: 6390 / 6980
+Evaluated queries: 6400 / 6980
+Evaluated queries: 6410 / 6980
+Evaluated queries: 6420 / 6980
+Evaluated queries: 6430 / 6980
+Evaluated queries: 6440 / 6980
+Evaluated queries: 6450 / 6980
+Evaluated queries: 6460 / 6980
+Evaluated queries: 6470 / 6980
+Evaluated queries: 6480 / 6980
+Evaluated queries: 6490 / 6980
+Evaluated queries: 6500 / 6980
+Evaluated queries: 6510 / 6980
+Evaluated queries: 6520 / 6980
+Evaluated queries: 6530 / 6980
+Evaluated queries: 6540 / 6980
+Evaluated queries: 6550 / 6980
+Evaluated queries: 6560 / 6980
+Evaluated queries: 6570 / 6980
+Evaluated queries: 6580 / 6980
+Evaluated queries: 6590 / 6980
+Evaluated queries: 6600 / 6980
+Evaluated queries: 6610 / 6980
+Evaluated queries: 6620 / 6980
+Evaluated queries: 6630 / 6980
+Evaluated queries: 6640 / 6980
+Evaluated queries: 6650 / 6980
+Evaluated queries: 6660 / 6980
+Evaluated queries: 6670 / 6980
+Evaluated queries: 6680 / 6980
+Evaluated queries: 6690 / 6980
+Evaluated queries: 6700 / 6980
+Evaluated queries: 6710 / 6980
+Evaluated queries: 6720 / 6980
+Evaluated queries: 6730 / 6980
+Evaluated queries: 6740 / 6980
+Evaluated queries: 6750 / 6980
+Evaluated queries: 6760 / 6980
+Evaluated queries: 6770 / 6980
+Evaluated queries: 6780 / 6980
+Evaluated queries: 6790 / 6980
+Evaluated queries: 6800 / 6980
+Evaluated queries: 6810 / 6980
+Evaluated queries: 6820 / 6980
+Evaluated queries: 6830 / 6980
+Evaluated queries: 6840 / 6980
+Evaluated queries: 6850 / 6980
+Evaluated queries: 6860 / 6980
+Evaluated queries: 6870 / 6980
+Evaluated queries: 6880 / 6980
+Evaluated queries: 6890 / 6980
+Evaluated queries: 6900 / 6980
+Evaluated queries: 6910 / 6980
+Evaluated queries: 6920 / 6980
+Evaluated queries: 6930 / 6980
+Evaluated queries: 6940 / 6980
+Evaluated queries: 6950 / 6980
+Evaluated queries: 6960 / 6980
+Evaluated queries: 6970 / 6980
+Evaluated queries: 6980 / 6980
+{
+  "approach": "All embeddings except CLS/SEP",
+  "dataset": "msmarco-passage/dev/small",
+  "top_k": 1000,
+  "max_length": 128,
+  "batch_size": 64,
+  "metrics": {
+    "NDCG@10": 0.006596951063817498,
+    "MRR@10": 0.0039934393050438865,
+    "MAP@1000": 0.011049561033668377,
+    "Recall@100": 0.20571872015281756,
+    "evaluated_queries": 6980
+  }
+}
+Evaluating: msmarco-passage/trec-dl-hard
+Queries: 50
+Queries with qrels: 50
+Queries with candidates: 50
+Evaluated queries: 10 / 50
+Evaluated queries: 20 / 50
+Evaluated queries: 30 / 50
+Evaluated queries: 40 / 50
+Evaluated queries: 50 / 50
+{
+  "approach": "All embeddings except CLS/SEP",
+  "dataset": "msmarco-passage/trec-dl-hard",
+  "top_k": 1000,
+  "max_length": 128,
+  "batch_size": 64,
+  "metrics": {
+    "NDCG@10": 0.0005678933438947631,
+    "MRR@10": 0.0022222222222222222,
+    "MAP@1000": 0.034833959660613666,
+    "Recall@100": 0.12440585641831606,
+    "evaluated_queries": 50
+  }
+}
+Saved: eval_results/embeddings_except_cls_sep_results.jsonl
+Saved: eval_results/embeddings_except_cls_sep_results.csv

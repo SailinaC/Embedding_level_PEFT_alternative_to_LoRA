@@ -1,0 +1,13 @@
+Using device: cuda
+Document table: docs
+Document id column: id
+Document text column: text
+Loaded queries: 808731
+Trainable parameters: 335143938
+Total model parameters: 335143938
+Trainable percentage: 100.0
+Batch size: 8
+Accumulation steps: 16
+Effective batch size: 128
+Resumed from: outputs/full_monobert/latest/checkpoint.pt
+Start step: 75000

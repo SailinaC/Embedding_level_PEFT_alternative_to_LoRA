@@ -1,0 +1,36 @@
+Using device: cuda
+Document table: docs
+Document id column: id
+Document text column: text
+Loaded queries: 808731
+Trainable parameters: 335143938
+Total model parameters: 335143938
+Trainable percentage: 100.0
+Batch size: 8
+Accumulation steps: 16
+Effective batch size: 128
+Step 50/1000 | loss = 0.6958 | sec/step = 1.0316 | estimated_100k_hours = 28.65 | max_gpu_memory_gb = 6.28
+Step 100/1000 | loss = 0.6029 | sec/step = 1.0565 | estimated_100k_hours = 29.35 | max_gpu_memory_gb = 6.28
+Step 150/1000 | loss = 0.4987 | sec/step = 1.0572 | estimated_100k_hours = 29.37 | max_gpu_memory_gb = 6.28
+Step 200/1000 | loss = 0.4141 | sec/step = 1.0618 | estimated_100k_hours = 29.49 | max_gpu_memory_gb = 6.28
+Step 250/1000 | loss = 0.3497 | sec/step = 1.0650 | estimated_100k_hours = 29.58 | max_gpu_memory_gb = 6.28
+Step 300/1000 | loss = 0.3189 | sec/step = 1.0619 | estimated_100k_hours = 29.50 | max_gpu_memory_gb = 6.28
+Step 350/1000 | loss = 0.3110 | sec/step = 1.0584 | estimated_100k_hours = 29.40 | max_gpu_memory_gb = 6.28
+Step 400/1000 | loss = 0.3163 | sec/step = 1.0540 | estimated_100k_hours = 29.28 | max_gpu_memory_gb = 6.28
+Step 450/1000 | loss = 0.2987 | sec/step = 1.0511 | estimated_100k_hours = 29.20 | max_gpu_memory_gb = 6.28
+Step 500/1000 | loss = 0.2748 | sec/step = 1.0474 | estimated_100k_hours = 29.09 | max_gpu_memory_gb = 6.28
+Step 550/1000 | loss = 0.2984 | sec/step = 1.0451 | estimated_100k_hours = 29.03 | max_gpu_memory_gb = 6.28
+Step 600/1000 | loss = 0.2579 | sec/step = 1.0457 | estimated_100k_hours = 29.05 | max_gpu_memory_gb = 6.28
+Step 650/1000 | loss = 0.2597 | sec/step = 1.0462 | estimated_100k_hours = 29.06 | max_gpu_memory_gb = 6.28
+Step 700/1000 | loss = 0.2400 | sec/step = 1.0449 | estimated_100k_hours = 29.02 | max_gpu_memory_gb = 6.28
+Step 750/1000 | loss = 0.2337 | sec/step = 1.0431 | estimated_100k_hours = 28.98 | max_gpu_memory_gb = 6.28
+Step 800/1000 | loss = 0.2901 | sec/step = 1.0432 | estimated_100k_hours = 28.98 | max_gpu_memory_gb = 6.28
+Step 850/1000 | loss = 0.2637 | sec/step = 1.0442 | estimated_100k_hours = 29.01 | max_gpu_memory_gb = 6.28
+Step 900/1000 | loss = 0.2996 | sec/step = 1.0428 | estimated_100k_hours = 28.97 | max_gpu_memory_gb = 6.28
+Step 950/1000 | loss = 0.2610 | sec/step = 1.0419 | estimated_100k_hours = 28.94 | max_gpu_memory_gb = 6.28
+Step 1000/1000 | loss = 0.2673 | sec/step = 1.0429 | estimated_100k_hours = 28.97 | max_gpu_memory_gb = 6.28
+Finished feasibility test
+Elapsed seconds: 1042.9353437423706
+Seconds per step: 1.0429353437423705
+Estimated hours for 100k steps: 28.970426215065846
+Max GPU memory GB: 6.278162002563477
