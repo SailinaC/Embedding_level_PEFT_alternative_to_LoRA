@@ -1,4 +1,4 @@
-# Embedding-Level Parameter-Efficient Fine-Tuning as an Alternative to LoRA
+# Embedding-Level Parameter-Efficient Fine-Tuning as an alternative to LoRA
 
 The thesis investigates whether very small and targeted parameter updates can adapt a BERT cross-encoder for Information Retrieval. The main idea is inspired by Light-MonoT5, where only selected prompt embeddings are trained instead of fine-tuning the whole model. This repository applies a related idea to MonoBERT-style passage re-ranking and compares it with BM25, Public MonoBERT, LoRA, and full MonoBERT fine-tuning.
 
