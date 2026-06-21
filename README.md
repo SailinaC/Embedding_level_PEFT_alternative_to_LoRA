@@ -90,12 +90,6 @@ The BERT cross-encoder input format is:
 [CLS] query [SEP] passage [SEP]
 ```
 
-The model is trained as a binary relevance classifier using MS MARCO triples:
-
-```text
-(query, positive passage) -> label 1
-(query, negative passage) -> label 0
-```
 
 ## Experiments
 
