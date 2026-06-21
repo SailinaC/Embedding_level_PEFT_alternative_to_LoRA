@@ -189,7 +189,3 @@ LoRA applied to all attention matrices performs close to Public MonoBERT and Ful
 Under the supervision of:
 - Dr. Gabriella Pasi, University of Milano-Biccoca
 - Marco Braga, University of Milano-Biccoca
-
-
-
-```
