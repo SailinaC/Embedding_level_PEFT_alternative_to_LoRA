@@ -1,0 +1,153 @@
+\chapter{Experimental Setup}
+\label{ch:experiments}
+
+This chapter describes the experimental setup used to train and evaluate the models. While Chapter~\ref{ch:methodology} defined the methods conceptually, this chapter presents the implementation details, datasets, training configuration, evaluation pipeline, and practical decisions required to execute the experiments.
+
+\section{Implementation Environment}
+\label{sec:experiments_environment}
+
+The experiments were implemented in Python using PyTorch and HuggingFace Transformers. Dataset access was handled through \texttt{ir\_datasets}. Training and evaluation jobs were executed on an HPC cluster using SLURM. GPU acceleration was used for all neural training and re-ranking experiments.
+
+The project required both training scripts and evaluation scripts. Training scripts were written separately for embedding-level tuning, LoRA tuning, selected attention-matrix tuning, and full MonoBERT fine-tuning. Evaluation scripts load the trained checkpoints, reconstruct the corresponding model, score candidate passages, and compute ranking metrics.
+
+The MS MARCO passage collection contains approximately 8.8 million passages. To avoid repeatedly scanning the full corpus, a local SQLite document database was built. This database maps passage IDs to passage text and is used during both training and evaluation.
+
+\section{Training Data}
+\label{sec:experiments_training_data}
+
+All locally trained neural models are trained on MS MARCO passage ranking triples \cite{nguyen2016msmarco}. Each triple contains a query, a positive passage, and a negative passage. The positive passage is treated as relevant, and the negative passage is treated as non-relevant.
+
+Each triple is converted into two binary training examples:
+
+\begin{align}
+    (q,d^+) &\rightarrow 1, \\
+    (q,d^-) &\rightarrow 0.
+\end{align}
+
+This converts the ranking data into a sequence classification problem suitable for BERT. The query and passage are encoded using the format:
+
+\begin{equation}
+    \texttt{[CLS]} \; q \; \texttt{[SEP]} \; d \; \texttt{[SEP]}.
+\end{equation}
+
+The model predicts whether the passage is relevant to the query.
+
+\section{Evaluation Datasets}
+\label{sec:experiments_evaluation_datasets}
+
+MS MARCO is a widely used benchmark for passage ranking and neural retrieval research \cite{nguyen2016msmarco}. It contains real search queries and passage-level relevance annotations, making it a standard dataset for training and evaluating neural re-ranking models. TREC Deep Learning provides carefully judged evaluation collections for neural retrieval systems \cite{craswell2020overview}. BEIR is a heterogeneous benchmark designed to evaluate retrieval models across multiple domains \cite{thakur2021beir}; while this thesis focuses on MS MARCO, TREC DL, and the DL-Hard evaluation setting, BEIR provides important motivation for future evaluation across diverse retrieval scenarios.
+
+Evaluation is performed on four passage ranking datasets:
+
+\begin{itemize}
+    \item \texttt{msmarco-passage/trec-dl-2019/judged};
+    \item \texttt{msmarco-passage/trec-dl-2020/judged};
+    \item \texttt{msmarco-passage/dev/small};
+    \item \texttt{msmarco-passage/trec-dl-hard}.
+\end{itemize}
+
+TREC DL 2019 and TREC DL 2020 are used in this thesis because they provide high-quality relevance judgments for passage ranking evaluation. MS MARCO dev small provides a larger evaluation set. DL-Hard is included because it contains more challenging queries and is useful for testing robustness.
+
+For TREC DL 2019, TREC DL 2020, and MS MARCO dev small, candidate rankings are loaded through \texttt{ir\_datasets}. For DL-Hard, top-1000 BM25 candidate passages are generated using PyTerrier and then re-ranked with each neural model.
+
+\section{Candidate Generation}
+\label{sec:experiments_candidate_generation}
+
+The neural models are evaluated as re-rankers. This means that the candidate set is fixed before neural scoring. Each neural model scores the same candidate passages for a given dataset, allowing a fair comparison between methods.
+
+For DL-Hard, candidate rankings were not directly available in the same form required by the evaluation code. Therefore, a PyTerrier BM25 index was built over the MS MARCO passage collection. The DL-Hard queries were submitted to this BM25 index, and the top-1000 passages per query were saved as candidate files.
+
+This step is important because neural re-rankers can only reorder passages present in the candidate set and cannot recover relevant passages that were not retrieved initially. The BM25 candidate generation therefore determines the maximum possible recall for DL-Hard re-ranking.
+
+\section{Training Configuration}
+\label{sec:experiments_training_config}
+
+The standard training setup is shown in Table~\ref{tab:experiments_training_config}.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{Setting} & \textbf{Value} \\
+\hline
+Base model & \texttt{bert-large-uncased} \\
+Training data & \texttt{msmarco-passage/train/triples-small} \\
+Maximum training steps & 100,000 \\
+Maximum sequence length & 128 \\
+Effective batch size & 128 \\
+Warmup steps & 10,000 \\
+Optimizer & AdamW \\
+Precision & Mixed precision \\
+Checkpoint interval & 10,000 steps \\
+\hline
+\end{tabular}
+\caption{Training configuration used for the main experiments.}
+\label{tab:experiments_training_config}
+\end{table}
+
+The maximum sequence length was set to 128 for computational feasibility. Since query text is usually shorter and more important for the task definition, truncation was applied only to the passage side. This preserves the query whenever possible.
+
+Most PEFT experiments used micro-batches of size 16 and gradient accumulation over 8 steps, giving an effective batch size of 128. Full MonoBERT used micro-batches of size 8 and gradient accumulation over 16 steps, also giving an effective batch size of 128.
+
+\section{Checkpointing}
+\label{sec:experiments_checkpointing}
+
+Checkpoints were saved every 10,000 steps. For restricted PEFT methods, checkpoints store only the trainable components required to reconstruct the adapted model. This keeps checkpoint sizes smaller than full-model checkpoints.
+
+Full MonoBERT fine-tuning requires much larger checkpoints because all model weights and optimizer states must be saved. Based on the runtime observed during preliminary training, a 100,000-step run was estimated to require approximately 29 hours. Since this exceeded the wall-time of a single job, the full fine-tuning run used checkpoint-based resumption across multiple SLURM submissions.
+
+\section{Verification of Trainable Parameters}
+\label{sec:experiments_verification}
+
+Each restricted training script verifies that only the intended parameters changed. For embedding-level experiments, the embedding matrix before training is compared with the embedding matrix after training. In the \texttt{[CLS]}/\texttt{[SEP]} experiment, only token IDs 101 and 102 should change. In the all-embeddings-except-\texttt{[CLS]}/\texttt{[SEP]} experiment, those two rows should remain unchanged.
+
+For attention-matrix experiments, the selected matrices are compared before and after training. The logs report the magnitude of the change for each selected matrix. This verification is important because the correctness of the experiments depends on freezing all unintended parameters.
+
+\section{Compared Models}
+\label{sec:experiments_compared_models}
+
+Table~\ref{tab:experiments_models} summarizes the evaluated approaches.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{p{0.33\linewidth}p{0.53\linewidth}}
+\hline
+\textbf{Approach} & \textbf{Description} \\
+\hline
+BM25 & Lexical retrieval baseline. \\
+Public MonoBERT & Public MonoBERT model evaluated in the same pipeline. \\
+CLS/SEP embeddings & Only token IDs 101 and 102 are trained. \\
+Top-6 embeddings & Six most changed embedding rows are trained. \\
+Top-3 attention matrices & Three most changed attention matrices are trained directly. \\
+All embeddings & Full token embedding matrix is trained. \\
+All embeddings except CLS/SEP & Full token embedding matrix is trained except rows 101 and 102. \\
+LoRA all attention & LoRA is applied to all attention projection matrices. \\
+LoRA top-3 attention & LoRA is applied only to the top-3 changed attention matrices. \\
+Full MonoBERT & All parameters of BERT-large are fine-tuned. \\
+\hline
+\end{tabular}
+\caption{Approaches evaluated in the thesis.}
+\label{tab:experiments_models}
+\end{table}
+
+\section{Evaluation Procedure}
+\label{sec:experiments_evaluation_procedure}
+
+For each query, each model scores up to 1000 candidate passages. The score used for neural models is the relevance logit produced by the classification head. The passages are then sorted in decreasing order of score.
+
+The final results are reported using:
+
+\begin{itemize}
+    \item nDCG@10;
+    \item MRR@10;
+    \item MAP@1000;
+    \item Recall@100.
+\end{itemize}
+
+All final result files are merged into one table containing ten approaches evaluated on four datasets. This produces 40 total experiment rows.
+
+\section{Summary}
+\label{sec:experiments_summary}
+
+The experimental setup was designed to compare methods under a common re-ranking pipeline. All neural models use the same base architecture, input format, candidate sets, and evaluation metrics. The differences between approaches are therefore primarily determined by which parameters are trainable and how adaptation is performed.

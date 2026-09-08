@@ -1,0 +1,60 @@
+\documentclass[bac, screen]{bai-thesis}
+\usepackage{thesis}
+
+%-------------------------------------------------------------------------------
+% Packages and macros
+\usepackage{verbatim}
+%-------------------------------------------------------------------------------
+%Uncomment if you want to use acronyms, and add your acronyms here
+
+%\usepackage[acronym,shortcuts,nonumberlist,nopostdot]{glossaries}
+%\makeglossaries
+%\newacronym{ros}{ROS}{Robot Operating System}
+%\newacronym{vr}{VR}{Virtual Reality}
+
+%-------------------------------------------------------------------------------
+% Title information
+%-------------------------------------------------------------------------------
+\title{Investigating embedding-level parameter-efficient fine-tuning as an alternative to LoRA}
+
+\author{Sailina Singh Chaudhary}
+\date{\today}
+
+% Select the subject
+\subject{Information Retrieval}
+
+% Academic Year
+\AY{2024/2025}
+
+\supervisor{Dr. Gabriella Pasi, University of Milano-Biccoca,}
+\supervisor{Marco Braga, University of Milano-Biccoca}
+%-------------------------------------------------------------------------------
+
+%-------------------------------------------------------------------------------
+\begin{document}
+\maketitle
+%-------------------------------------------------------------------------------
+% \frontmatter
+%-------------------------------------------------------------------------------
+\include{content/abstract}
+\include{contents}
+%-------------------------------------------------------------------------------
+\include{content/1_introduction}
+\include{content/2_background}
+\include{content/3_methodology}
+\include{content/4_experiments}
+\include{content/5_results}
+\include{content/6_conclusions}
+%-------------------------------------------------------------------------------
+% \backmatter
+%-------------------------------------------------------------------------------
+% Uncomment if you use acronyms
+
+%\phantomsection
+%\pdfbookmark[1]{List of Acronyms}{listofacronyms}
+%\printglossary[type=\acronymtype]
+%-------------------------------------------------------------------------------
+\include{backmatter}
+%-------------------------------------------------------------------------------
+\end{document}
+%-------------------------------------------------------------------------------

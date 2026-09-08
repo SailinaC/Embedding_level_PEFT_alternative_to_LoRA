@@ -1,0 +1,57 @@
+\chapter{Conclusions}
+\label{ch:conclusions}
+
+This thesis investigated highly parameter-efficient adaptation strategies for BERT-based passage re-ranking, with a particular focus on embedding-level tuning as an alternative to LoRA-based adaptation. The work began from the motivation of Light-MonoT5, where selected prompt-token embeddings are trained while the rest of the model remains frozen. The central question was whether a similar idea could be transferred to a MonoBERT-style cross-encoder.
+
+\section{Summary of the Thesis}
+\label{sec:conclusions_summary}
+
+The thesis studied passage re-ranking using \texttt{bert-large-uncased}. The main proposed approach trained only the embeddings of the BERT structural tokens \texttt{[CLS]} and \texttt{[SEP]}. These tokens are central to the MonoBERT input format:
+
+\begin{equation}
+    \texttt{[CLS]} \; q \; \texttt{[SEP]} \; d \; \texttt{[SEP]}.
+\end{equation}
+
+The motivation was that these structural tokens occur in every query-passage pair and may influence how the frozen model organizes the input. Training only these two embeddings updates just 2048 parameters, making it an extremely small adaptation method.
+
+To better understand where task adaptation occurs, the thesis also compared BERT and MonoBERT parameters. The most changed embedding rows and attention matrices were selected for additional experiments. The final experimental setup included ten approaches: BM25, Public MonoBERT, \texttt{[CLS]}/\texttt{[SEP]} tuning, top-6 embedding tuning, top-3 attention matrix tuning, all-embedding tuning, all embeddings except \texttt{[CLS]}/\texttt{[SEP]}, LoRA all attention, LoRA top-3 attention, and Full MonoBERT.
+
+The methods were evaluated on TREC DL 2019, TREC DL 2020, MS MARCO dev small, and DL-Hard. The results revealed a consistent pattern. Embedding-only adaptation was highly parameter-efficient but weak in ranking effectiveness. Methods that modified attention components or performed broader model adaptation were substantially stronger. LoRA applied to all attention matrices performed close to Public MonoBERT and Full MonoBERT, while LoRA applied only to the top-3 changed attention matrices retained a large portion of the performance with far fewer trainable parameters.
+
+\section{Main Findings}
+\label{sec:conclusions_findings}
+
+The first finding is that training only \texttt{[CLS]} and \texttt{[SEP]} is not sufficient for strong passage re-ranking. Although the method is extremely efficient, its ranking performance is far below MonoBERT and LoRA. This shows that updating only the BERT structural tokens does not provide enough adaptation capacity for strong passage re-ranking.
+
+The second finding is that training more embeddings does not automatically solve the problem. The full embedding-layer experiment improves recall in some cases, but it still performs poorly in terms of top-ranking quality. The all-embeddings-except-\texttt{[CLS]}/\texttt{[SEP]} experiment also remains weak. These results suggest that embedding-level adaptation alone does not sufficiently modify the internal query-passage interaction mechanisms required for strong re-ranking.
+
+The third finding is that attention matrices are substantially more effective adaptation targets than embeddings in this experimental setting. Directly training the top-3 changed attention matrices produces strong results. This provides further evidence that the BERT-to-MonoBERT parameter-change analysis identifies meaningful parts of the model for retrieval adaptation.
+
+The fourth finding is that LoRA is a strong PEFT baseline for this task. LoRA applied to all attention matrices performs close to the performance of fully fine-tuned MonoBERT models while training far fewer parameters than full fine-tuning. LoRA applied only to the top-3 changed attention matrices is weaker, but still much stronger than embedding-only adaptation.
+
+\section{Limitations}
+\label{sec:conclusions_limitations}
+
+The thesis has several limitations. First, the experiments focus on BERT-based passage re-ranking and do not evaluate embedding-level tuning across many different language model architectures. The original thesis proposal included the broader possibility of evaluating generalization across models and tasks, but the final experimental work focuses on BERT and MonoBERT because of time and computational constraints.
+
+Second, the maximum input length is set to 128 tokens for computational feasibility. This makes the experiments manageable, but it may truncate useful passage content. A longer maximum sequence length could potentially improve ranking performance, especially for full MonoBERT and LoRA models.
+
+Third, the evaluation focuses on MS MARCO, TREC DL, and DL-Hard. BEIR is discussed as an important benchmark, but broad out-of-domain BEIR evaluation was not completed in the final experimental set. Evaluating on more BEIR datasets would provide a stronger test of generalization.
+
+Fourth, the parameter-change analysis depends on the specific BERT and MonoBERT models compared. Different checkpoints or training settings might produce different top-changed embeddings and matrices.
+
+\section{Future Work}
+\label{sec:conclusions_future}
+
+Future work could explore hybrid adaptation strategies. The results suggest that embeddings alone are not sufficient, but they may still be useful when combined with selected attention modules. For example, one could train \texttt{[CLS]} and \texttt{[SEP]} together with LoRA adapters on selected attention matrices.
+
+Another direction is to evaluate the approach on more datasets, especially from BEIR. This would test whether the conclusions hold beyond MS MARCO-style passage ranking. It would also allow the thesis question to be extended toward out-of-domain generalization.
+
+A third direction is to apply the same methodology to other architectures. The architectural difference between MonoT5 and MonoBERT may explain why prompt-token adaptation transfers differently between the two settings. Testing the same parameter-selection idea on T5, BERT, and newer decoder-only re-rankers would clarify whether embedding-level PEFT is architecture-dependent.
+
+Finally, future work could investigate more advanced parameter-selection criteria. This thesis uses norm-based differences between BERT and MonoBERT. Other criteria could include gradient magnitude, Fisher information, activation sensitivity, or task-vector composition.
+
+\section{Final Remarks}
+\label{sec:conclusions_final}
+
+The thesis shows that embedding-level tuning is a useful tool for studying adaptation behaviour, but it does not achieve competitive ranking effectiveness compared with LoRA-based adaptation in BERT-based passage re-ranking. The results indicate that effective adaptation for MonoBERT appears to depend more strongly on attention mechanisms than on isolated embedding vectors. Therefore, the most promising direction for efficient BERT re-ranking is not purely embedding-level adaptation, but targeted attention-level adaptation guided by parameter-change analysis.

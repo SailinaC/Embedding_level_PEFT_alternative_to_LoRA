@@ -1,0 +1,111 @@
+\chapter{Introduction}
+\label{ch:introduction}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Information Retrieval (IR) is the field concerned with retrieving information that satisfies a user's information need from a large collection of documents or passages. Search engines, question answering systems, digital libraries, and many other applications rely on retrieval systems to identify relevant information and present it in an effective order. In this setting, ranking is critical. A system that retrieves a relevant passage but places it too low in the ranking may still fail from the user's perspective, since users typically examine only the highest-ranked results.
+
+For many years, retrieval systems have relied on lexical models such as BM25. These methods remain strong and widely used because they are efficient, scalable, and robust. They estimate relevance using term matching signals, term importance, and document-length normalization. However, lexical retrieval has a fundamental limitation: it relies primarily on surface-level word overlap. A passage can be highly relevant even when it does not contain the exact terms used in the query. For example, a query about ``pregnancy and caffeine'' may be answered by a passage discussing ``coffee consumption during gestation''. Lexical models may struggle in such cases because the semantic relationship between the query and passage is not explicitly represented.
+
+Neural ranking models address this limitation by learning contextual representations from data. Transformer-based language models have become particularly effective for Information Retrieval. BERT, originally introduced for language understanding tasks, can be adapted as a cross-encoder for passage re-ranking \cite{devlin2018bert,nogueira2019passage}. In this setting, the query and candidate passage are jointly encoded:
+
+\begin{equation}
+    \texttt{[CLS]} \; q \; \texttt{[SEP]} \; d \; \texttt{[SEP]},
+\end{equation}
+
+where $q$ denotes the query and $d$ denotes the candidate passage. This formulation allows query and passage tokens to interact through self-attention. The final representation of the \texttt{[CLS]} token is then used by a classification head to predict passage relevance. When applied to passage ranking, this approach is commonly referred to as MonoBERT.
+
+MonoBERT and other cross-encoder models are effective because they model query-passage interactions directly. However, this effectiveness comes at a high computational cost. Full fine-tuning of BERT-large requires updating hundreds of millions of parameters. This increases memory requirements during training, increases optimizer storage, and produces large task-specific checkpoints. These limitations become increasingly important when adapting models to multiple tasks or domains.
+
+Parameter-Efficient Fine-Tuning (PEFT) methods aim to reduce this cost by freezing most of the pre-trained model and updating only a smaller subset of parameters. LoRA is one of the most widely adopted PEFT approaches \cite{hu2021lora}. Instead of modifying the original model weights directly, LoRA introduces trainable low-rank updates while keeping the original parameters frozen. It has shown strong adaptation performance while requiring substantially fewer trainable parameters than full fine-tuning.
+
+This thesis investigates a more restrictive form of parameter-efficient adaptation: embedding-level fine-tuning. Instead of introducing additional parameters or modifying internal transformer weights, it studies whether selected token embeddings can serve as compact adaptation targets for BERT-based passage re-ranking. This idea is motivated by Light-MonoT5, which investigates whether MonoT5 can be adapted by training only selected prompt-token embeddings while keeping the remaining model parameters frozen \cite{braga2025monot5}. This suggests that some task-specific adaptation behaviour may be captured by a small subset of parameters.
+
+The central idea of this thesis is to transfer this principle from MonoT5 to MonoBERT. However, the transfer is not direct because the two architectures use different mechanisms for relevance prediction. MonoT5 is a sequence-to-sequence model that predicts relevance through generated tokens, whereas MonoBERT is an encoder-only cross-encoder that predicts relevance through a classification head. Therefore, the adaptation targets must be reconsidered. In BERT, the input structure is defined by special tokens, particularly \texttt{[CLS]} and \texttt{[SEP]}. The \texttt{[CLS]} token provides the representation used by the classifier, while \texttt{[SEP]} separates the query and passage segments.
+
+This leads to the main research question of this thesis: can a BERT cross-encoder be adapted for passage re-ranking by training only selected embeddings, particularly the embeddings of structural tokens such as \texttt{[CLS]} and \texttt{[SEP]}? If successful, such an approach would provide an extremely parameter-efficient adaptation mechanism. In BERT-large, each embedding vector has dimension 1024, meaning that training only these two token embeddings updates only 2048 parameters.
+
+The objective of this thesis is not to assume that embedding-only adaptation can replace full fine-tuning. Instead, embedding-level tuning is investigated as a controlled experiment to understand where task-specific adaptation occurs in MonoBERT. If selected embeddings provide strong performance, this would indicate that a small number of input-level parameters contain substantial adaptation information. If performance is limited, this would suggest that deeper model components are required. To investigate this, embedding-level approaches are compared with selected attention-matrix tuning, LoRA-based adaptation, publicly available MonoBERT, BM25, and full MonoBERT fine-tuning.
+
+\section{Problem Formulation}
+\label{sec:introduction_problem}
+
+The task investigated in this thesis is passage re-ranking. Given a query $q$ and an initial candidate set of passages:
+
+\begin{equation}
+    C_q = \{d_1, d_2, \ldots, d_k\},
+\end{equation}
+
+the objective is to learn a scoring function:
+
+\begin{equation}
+    s(q,d_i) \rightarrow \mathbb{R},
+\end{equation}
+
+that estimates the relevance of each candidate passage $d_i$ with respect to the query. The final ranking is obtained by sorting the candidate passages according to their predicted relevance scores.
+
+The models studied in this thesis operate as second-stage re-rankers. They do not retrieve passages directly from the complete document collection. Instead, an initial retrieval system first produces a candidate set, and the neural re-ranker attempts to improve the ordering of these candidates. This setting is particularly suitable for cross-encoder models because they provide strong query-passage interaction modelling, but require separate inference for each query-passage pair.
+
+The standard approach for adapting BERT-based re-rankers is full fine-tuning, where all model parameters are updated:
+
+\begin{equation}
+    \theta^\ast = \arg\min_{\theta} \mathcal{L}_{task}(\theta).
+    \label{eq:full_finetune_objective}
+\end{equation}
+
+Although effective, full fine-tuning requires updating and storing the complete model. Parameter-Efficient Fine-Tuning instead keeps the original parameters frozen and optimizes only a smaller set of task-specific parameters:
+
+\begin{equation}
+    \phi^\ast = \arg\min_{\phi} \mathcal{L}_{task}(\theta_0,\phi).
+    \label{eq:peft_objective}
+\end{equation}
+
+where $\theta_0$ represents the frozen pre-trained model parameters and $\phi$ represents the trainable adaptation parameters.
+
+The central question of this thesis is how small and restricted the trainable parameter set can be while still producing effective passage re-ranking performance. Different forms of $\phi$ are therefore investigated, including selected embedding vectors, selected attention matrices, LoRA adapters, and full model parameters.
+
+The thesis is guided by the following research questions:
+
+\begin{itemize}
+
+    \item \textbf{RQ1:} Can a BERT cross-encoder be adapted for passage re-ranking by training only selected embedding vectors?
+
+    \item \textbf{RQ2:} How does training only the structural token embeddings \texttt{[CLS]} and \texttt{[SEP]} compare with training the embedding rows that change most between BERT and MonoBERT?
+
+    \item \textbf{RQ3:} Are the strongest task-specific changes between BERT and MonoBERT concentrated more strongly in embedding parameters or attention parameters?
+
+    \item \textbf{RQ4:} How does embedding-level adaptation compare with LoRA-based parameter-efficient fine-tuning?
+
+    \item \textbf{RQ5:} Can LoRA applied only to the most changed attention matrices retain a substantial proportion of the performance achieved by applying LoRA to all attention matrices?
+
+    \item \textbf{RQ6:} Does locally fine-tuned MonoBERT achieve results comparable to a publicly available MonoBERT checkpoint, validating the experimental pipeline?
+
+\end{itemize}
+
+To answer these questions, the thesis evaluates a sequence of controlled experiments. The first experiment trains only the embeddings of \texttt{[CLS]} and \texttt{[SEP]}. Additional experiments train the most changed embedding rows, the most changed attention matrices, the complete embedding layer, and all embeddings except the structural tokens. LoRA is evaluated both across all attention matrices and only on selected attention matrices. BM25, publicly available MonoBERT, and full MonoBERT fine-tuning are included as reference systems.
+
+\section{Outline}
+\label{sec:introduction_outline}
+
+The remainder of this thesis is organized as follows.
+
+\vspace{\baselineskip}
+
+\textbf{Chapter~\ref{ch:background}} introduces the background required for this research. It covers classical Information Retrieval, BM25, evaluation metrics, transformer architectures, BERT, MonoBERT, MonoT5, LoRA, task arithmetic, and embedding-level adaptation.
+
+\vspace{\baselineskip}
+
+\textbf{Chapter~\ref{ch:methodology}} presents the proposed methodology. It describes how the Light-MonoT5 prompt-embedding idea is transferred to BERT, how BERT and MonoBERT parameters are compared, how embedding-level gradient masking is implemented, and how the different adaptation strategies are defined.
+
+\vspace{\baselineskip}
+
+\textbf{Chapter~\ref{ch:experiments}} describes the experimental setup. It presents the implementation environment, training data, evaluation datasets, candidate generation procedure, training configuration, checkpointing strategy, and verification procedures used during experimentation.
+
+\vspace{\baselineskip}
+
+\textbf{Chapter~\ref{ch:results}} presents the experimental results and analysis. It compares embedding-level adaptation, attention-matrix tuning, LoRA-based approaches, publicly available MonoBERT, full MonoBERT fine-tuning, and BM25 across the evaluated datasets.
+
+\vspace{\baselineskip}
+
+\textbf{Chapter~\ref{ch:conclusions}} summarizes the main findings of the thesis, answers the research questions, discusses limitations, and presents possible directions for future research.

@@ -1,0 +1,320 @@
+\chapter{Background and Related Work}
+\label{ch:background}
+
+This chapter introduces the background required for this thesis. The work is positioned at the intersection of Information Retrieval, neural passage re-ranking, and parameter-efficient fine-tuning. The chapter first introduces the retrieval problem and classical lexical ranking methods. It then presents evaluation metrics, neural re-ranking, transformers, BERT, MonoBERT, and MonoT5. Finally, it discusses parameter-efficient fine-tuning methods, with particular attention to LoRA, task arithmetic in Information Retrieval, and embedding-level adaptation.
+
+\section{Information Retrieval}
+\label{sec:background_ir}
+
+Information Retrieval (IR) studies methods for finding and ranking information items that satisfy a user's information need within a collection \cite{manning2008ir}. The user expresses an information need through a query, and the retrieval system returns a ranked list of documents or passages. A document is useful only if it is relevant and ranked sufficiently high to be observed by the user.
+
+Formally, given a collection:
+
+\begin{equation}
+    \mathcal{D} = \{d_1, d_2, \ldots, d_N\},
+\end{equation}
+
+and a query $q$, a retrieval system assigns a relevance score:
+
+\begin{equation}
+    s(q,d_i) \rightarrow \mathbb{R}.
+\end{equation}
+
+The documents are then ordered according to their scores. The objective of the scoring function is to estimate the relevance of each document to the query.
+
+A central challenge in IR is that relevance is not directly observable. Queries are often short descriptions of a user's information need, and relevance judgments may vary between users. Retrieval systems therefore approximate relevance using lexical matching, learned representations, user behaviour signals, or supervised relevance annotations.
+
+\subsection{Ranking and the Probability Ranking Principle}
+\label{subsec:background_prp}
+
+The Probability Ranking Principle provides a theoretical foundation for ranked retrieval. Under its assumptions, documents should be ranked in decreasing order of their probability of relevance \cite{manning2008ir}. If $R$ is a binary relevance variable, the ideal ranking orders documents according to:
+
+\begin{equation}
+    P(R=1 \mid q,d).
+\end{equation}
+
+In practice, this probability is unknown. Retrieval models therefore compute scores that approximate relevance. Classical retrieval models estimate relevance using term statistics, while neural retrieval models learn relevance patterns from data.
+
+\subsection{Passage Retrieval}
+\label{subsec:background_passage}
+
+This thesis focuses on passage retrieval and passage re-ranking. In passage retrieval, the retrieval unit is a short text passage rather than an entire document. This setting is common in question answering and web search, where a user's information need may be satisfied by a concise text segment.
+
+Passage retrieval differs from document retrieval because passages are shorter and typically contain more focused information. However, the number of retrievable units increases significantly, creating additional challenges for retrieval systems. The MS MARCO passage ranking dataset used in this thesis contains millions of passages and real user queries \cite{nguyen2016msmarco}.
+
+\subsection{Two-Stage Retrieval Pipelines}
+\label{subsec:background_two_stage}
+
+Modern neural retrieval systems commonly use a two-stage architecture \cite{lin2021pretrained}. The first stage retrieves an initial candidate set from the full collection. Since this stage must search millions of documents or passages, efficiency is the primary requirement. Lexical retrieval models such as BM25 and dense retrieval models are commonly used for this purpose.
+
+The second stage re-ranks the candidate set using a more accurate but computationally expensive model. Cross-encoders are particularly suitable for this stage because they jointly encode the query and passage, allowing detailed token-level interaction.
+
+This thesis studies second-stage passage re-ranking. The neural models are not responsible for retrieving passages from the complete collection. Instead, they receive candidate passages and reorder them according to predicted relevance.
+
+\section{Classical Lexical Retrieval}
+\label{sec:background_lexical}
+
+Classical retrieval models rely on lexical matching between queries and documents. They assume that relevant documents often contain terms that are important to the user's query. Although neural retrieval methods provide stronger semantic modelling capabilities, lexical retrieval remains an important baseline due to its efficiency and effectiveness.
+
+\paragraph{Term Frequency and Inverse Document Frequency}
+\label{subsec:background_tfidf}
+
+A fundamental concept in lexical retrieval is that terms should be weighted according to their discriminative value. A term appearing frequently in a document may indicate importance, but a term appearing in almost every document provides little information. This motivates the use of term frequency and inverse document frequency.
+
+The inverse document frequency of a term $t$ is commonly defined as:
+
+\begin{equation}
+    \operatorname{idf}(t) =
+    \log \frac{N}{df_t},
+\end{equation}
+
+where $N$ is the number of documents in the collection and $df_t$ is the number of documents containing the term. Rare terms receive higher weights because they provide stronger discrimination between relevant and non-relevant documents.
+
+\paragraph{BM25}
+\label{subsec:background_bm25}
+
+BM25 is one of the most widely used lexical ranking functions \cite{robertson2009probabilistic}. It is based on probabilistic retrieval and improves over basic TF-IDF by incorporating term-frequency saturation and document-length normalization.
+
+A common formulation of BM25 is:
+
+\begin{equation}
+    \operatorname{BM25}(q,d)
+    =
+    \sum_{t \in q}
+    \operatorname{idf}(t)
+    \frac{f(t,d)(k_1+1)}
+    {f(t,d)+k_1\left(1-b+b\frac{|d|}{\operatorname{avgdl}}\right)},
+\end{equation}
+
+where $f(t,d)$ represents the frequency of term $t$ in document $d$, $|d|$ is document length, $\operatorname{avgdl}$ is the average document length, and $k_1$ and $b$ are hyperparameters.
+
+BM25 remains important for two reasons. First, it is computationally efficient and can scale to large collections. Second, it provides a strong baseline that neural retrieval methods must improve upon. In this thesis, BM25 is used both as a retrieval baseline and as the candidate generator for the DL-Hard evaluation setting.
+
+\section{Evaluation Metrics in Information Retrieval}
+\label{sec:background_metrics}
+
+Evaluation in IR is performed by comparing ranked results against relevance judgments. Since users typically examine only the highest-ranked results, many evaluation metrics emphasize ranking quality near the top of the list.
+
+\paragraph{nDCG@10}
+\label{subsec:background_nDCG}
+
+Normalized Discounted Cumulative Gain is commonly used when relevance judgments contain multiple levels of relevance. Discounted Cumulative Gain at rank $k$ is defined as:
+
+\begin{equation}
+    \operatorname{DCG@}k =
+    \sum_{i=1}^{k}
+    \frac{2^{rel_i}-1}{\log_2(i+1)},
+\end{equation}
+
+where $rel_i$ represents the relevance grade of the document at rank $i$. The logarithmic discount reduces the contribution of relevant documents appearing lower in the ranking.
+
+nDCG normalizes DCG by the ideal ranking:
+
+\begin{equation}
+    \operatorname{nDCG@}k =
+    \frac{\operatorname{DCG@}k}{\operatorname{IDCG@}k}.
+\end{equation}
+
+This thesis reports nDCG@10 because it measures the quality of the highest-ranked results, which are most important in practical search systems.
+
+\paragraph{MRR@10}
+\label{subsec:background_mrr}
+
+Mean Reciprocal Rank measures how early the first relevant result appears in a ranked list. For an individual query, reciprocal rank is defined as:
+
+\begin{equation}
+    \operatorname{RR} = \frac{1}{r},
+\end{equation}
+
+where $r$ is the rank position of the first relevant passage. MRR@10 averages reciprocal rank over all queries while considering only the top ten ranking positions. If no relevant passage appears within the first ten positions, the query receives a score of zero.
+
+MRR is particularly useful for tasks where finding a single relevant result near the top of the ranking is important, making it a common metric for MS MARCO-style passage ranking.
+
+\paragraph{MAP@1000}
+\label{subsec:background_map}
+
+Mean Average Precision evaluates how effectively a system ranks all relevant documents across queries. For a query with relevant set $R$, Average Precision at rank $k$ is:
+
+\begin{equation}
+    \operatorname{AP@}k =
+    \frac{1}{|R|}
+    \sum_{i=1}^{k}
+    P@i \cdot \mathbb{I}(d_i \in R),
+\end{equation}
+
+where $P@i$ represents precision at rank $i$ and $\mathbb{I}$ is an indicator function. MAP@1000 averages AP@1000 over all queries.
+
+\paragraph{Recall@100}
+\label{subsec:background_recall}
+
+Recall@100 measures the fraction of relevant passages that appear within the first 100 ranked positions:
+
+\begin{equation}
+    \operatorname{Recall@}100 =
+    \frac{|R \cap D_{100}|}{|R|}.
+\end{equation}
+
+In a re-ranking setting, Recall@100 provides information about whether relevant passages are moved into the upper part of the ranking, even if they are not placed within the top ten positions.
+
+\section{Neural Information Retrieval}
+\label{sec:background_neural_ir}
+
+Neural Information Retrieval uses neural models to estimate relevance from learned representations. Unlike purely lexical methods, neural models can capture semantic relationships and contextual information, allowing them to identify relevant passages even when query and passage terms do not exactly overlap.
+
+\subsection{Bi-Encoders}
+\label{subsec:background_biencoders}
+
+Bi-encoders independently encode queries and passages:
+
+\begin{equation}
+    h_q = f_\theta(q), \qquad h_d = g_\theta(d).
+\end{equation}
+
+The resulting representations are compared using a similarity function:
+
+\begin{equation}
+    s(q,d) = \operatorname{sim}(h_q,h_d).
+\end{equation}
+
+Bi-encoders are computationally efficient because document representations can be precomputed and stored in an index. However, the query and passage interact only through the final similarity calculation, limiting fine-grained token-level interaction.
+
+\subsection{Cross-Encoders}
+\label{subsec:background_crossencoders}
+
+Cross-encoders jointly encode the query and passage as a single input sequence. This allows direct interaction between query and passage tokens throughout the model. The resulting representation is then used to estimate relevance.
+
+The advantage of cross-encoders is their ability to model detailed interactions between query and passage terms. However, they are computationally expensive because every query-passage pair requires an independent forward pass.
+
+For this reason, cross-encoders are primarily used for second-stage re-ranking rather than first-stage retrieval. This thesis focuses on BERT-based cross-encoder re-ranking.
+
+\section{Transformers}
+\label{sec:background_transformers}
+
+Transformers are neural architectures based on self-attention, which allows every token representation to attend to all other tokens in the sequence \cite{vaswani2017attention}. Given an input representation matrix $X$, attention computes query, key, and value projections:
+
+\begin{equation}
+    Q=XW_Q, \qquad K=XW_K, \qquad V=XW_V.
+\end{equation}
+
+The attention output is:
+
+\begin{equation}
+    \operatorname{Attention}(Q,K,V)
+    =
+    \operatorname{softmax}
+    \left(
+    \frac{QK^\top}{\sqrt{d_k}}
+    \right)V.
+\end{equation}
+
+Multi-head attention performs this operation using multiple projection matrices, allowing the model to capture different types of relationships between tokens.
+
+Self-attention is particularly important for passage re-ranking because relevance often depends on interactions between query and passage terms. Encoder-only transformer models such as BERT use stacked self-attention layers to produce contextualized token representations.
+
+\section{BERT}
+\label{sec:background_bert}
+
+BERT is an encoder-only transformer model pre-trained using self-supervised objectives, most notably masked language modelling \cite{devlin2018bert}. Unlike autoregressive language models, BERT uses bidirectional context, allowing each token representation to depend on surrounding tokens.
+
+For sentence-pair tasks, BERT uses special tokens and segment information. The \texttt{[CLS]} token is placed at the beginning of the sequence and provides a representation used for classification. The \texttt{[SEP]} token separates different text segments.
+
+For passage re-ranking, the input format is:
+
+\begin{equation}
+    \texttt{[CLS]} \; q \; \texttt{[SEP]} \; d \; \texttt{[SEP]}.
+\end{equation}
+
+The final hidden representation of \texttt{[CLS]} is passed to a classification layer. The model produces logits corresponding to relevant and non-relevant classes. During standard fine-tuning, both the encoder and classification head are updated, while PEFT methods restrict which parameters are trainable.
+
+\section{MonoBERT}
+\label{sec:background_monobert}
+
+MonoBERT applies BERT to passage re-ranking by treating every query-passage pair as an independent classification problem \cite{nogueira2019passage}. The model estimates the probability that a passage is relevant to a query, and candidate passages are sorted according to their predicted relevance scores.
+
+MonoBERT achieves strong ranking effectiveness because it uses the full contextual modelling capability of BERT for each query-passage pair. However, this also introduces significant computational cost. For example, re-ranking 1000 candidate passages requires 1000 separate model evaluations.
+
+This computational cost makes MonoBERT unsuitable for first-stage retrieval over very large collections, but practical for second-stage re-ranking. In the original MonoBERT setting, the complete BERT model is fine-tuned on passage ranking data. In this thesis, MonoBERT serves both as a reference model and as the target setting for investigating embedding-level adaptation.
+
+\section{MonoT5 and Light-MonoT5}
+\label{sec:background_monot5}
+
+MonoT5 reformulates document ranking as a sequence-to-sequence generation problem \cite{nogueira2020document}. Instead of directly predicting a relevance score, the model receives a query-document pair and generates a relevance token such as ``true'' or ``false''. The probability assigned to the relevant token is then used as the ranking score.
+
+Light-MonoT5 investigates the adaptation behaviour of MonoT5 and studies whether effective ranking performance can be achieved by training only selected prompt-token embeddings \cite{braga2025monot5}. The method is motivated by the observation that a small subset of parameters may contain useful task-specific adaptation information.
+
+The adaptation principle explored in Light-MonoT5 motivates this thesis. However, the two settings are not identical. MonoT5 uses a sequence-to-sequence architecture with explicit textual prompts, whereas MonoBERT is an encoder-only cross-encoder without prompt generation. Therefore, this thesis adapts the idea of selective embedding training to the BERT input structure by investigating structural tokens such as \texttt{[CLS]} and \texttt{[SEP]}.
+
+\section{Parameter-Efficient Fine-Tuning}
+\label{sec:background_peft}
+
+As introduced in Section~\ref{sec:introduction_problem}, full fine-tuning updates all parameters of a pre-trained model (Equation~\ref{eq:full_finetune_objective}), whereas Parameter-Efficient Fine-Tuning (PEFT) instead freezes most model parameters and optimizes only a small set of additional or selected parameters, $\phi$ (Equation~\ref{eq:peft_objective}), where $\theta_0$ represents frozen base-model parameters.
+
+PEFT methods reduce memory usage, training cost, and checkpoint size. They also enable multiple task-specific adaptations to share the same frozen base model.
+
+\section{LoRA}
+\label{sec:background_lora}
+
+Low-Rank Adaptation (LoRA) is one of the most widely used PEFT methods \cite{hu2021lora}. LoRA freezes a pre-trained weight matrix $W_0$ and learns a low-rank update:
+
+\begin{equation}
+    W = W_0 + \Delta W,
+\end{equation}
+
+where:
+
+\begin{equation}
+    \Delta W = BA.
+\end{equation}
+
+The matrices $A$ and $B$ are trainable low-rank matrices whose rank $r$ is much smaller than the dimensions of the original weight matrix. This significantly reduces the number of trainable parameters.
+
+LoRA is commonly applied to attention projection matrices because these matrices contain important task-related transformations in transformer models. In this thesis, LoRA is used as the primary PEFT baseline and is compared against embedding-level and directly trained attention-level adaptation methods.
+
+
+\section{Task Arithmetic for Information Retrieval}
+\label{sec:background_task_arithmetic}
+
+Task arithmetic studies model adaptation by analysing differences between model parameters. In Information Retrieval, task vectors have been used to represent adaptation as the parameter difference between a pre-trained model and a task-adapted model \cite{braga2025taskarithmetic}.
+
+This perspective motivates the parameter-change analysis used in this thesis. If the difference between BERT and MonoBERT identifies parameters that change strongly during IR adaptation, these parameters may represent useful adaptation targets. This motivates experiments that train the most changed embedding rows and the most changed attention matrices.
+
+\section{Embedding-Level Adaptation}
+\label{sec:background_embedding_adaptation}
+
+Embedding-level adaptation restricts training to selected rows of the embedding matrix. Let:
+
+\begin{equation}
+    E \in \mathbb{R}^{|V| \times h}
+\end{equation}
+
+represent the word embedding matrix, where $|V|$ is the vocabulary size and $h$ is the hidden dimension. Each token ID corresponds to one row of this matrix.
+
+If $S$ represents the set of trainable token IDs, only rows belonging to $S$ receive updates:
+
+\begin{equation}
+    \Delta E_i' =
+    \begin{cases}
+    \Delta E_i & \text{if } i \in S,\\
+    0 & \text{otherwise}.
+    \end{cases}
+\end{equation}
+
+The masked update $\Delta E'$ is applied during optimization, ensuring that all non-selected embeddings remain unchanged.
+
+In BERT-large, each embedding vector has dimension 1024. Therefore, training only the \texttt{[CLS]} and \texttt{[SEP]} embeddings updates only:
+
+\begin{equation}
+    2 \times 1024 = 2048
+\end{equation}
+
+parameters. This makes the approach extremely parameter-efficient, but also highly restrictive.
+
+Embedding-level adaptation can be interpreted as a form of input-structure tuning. It modifies how selected tokens enter the frozen transformer, but it does not directly change internal transformer computations. Whether this limited adaptation capacity is sufficient for passage re-ranking is the central empirical question investigated in this thesis.
+
+
+\section{Summary}
+\label{sec:background_summary}
+
+This chapter introduced the concepts required to understand the thesis. Classical Information Retrieval provides the retrieval formulation, BM25 baseline, and evaluation metrics. Neural Information Retrieval introduces cross-encoders such as MonoBERT, which provide strong ranking effectiveness but require substantial computation. MonoT5 and Light-MonoT5 motivate the idea that selected embeddings may serve as compact adaptation points. PEFT methods such as LoRA reduce adaptation cost by training only a subset of parameters. Task arithmetic further supports the broader idea that adaptation can be studied through parameter selection.
+
+The next chapter describes how these ideas are translated into the methodology used to investigate embedding-level adaptation for BERT-based passage re-ranking.

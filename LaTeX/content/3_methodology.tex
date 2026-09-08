@@ -1,0 +1,341 @@
+\chapter{Methodology}
+\label{ch:methodology}
+
+This chapter describes the methodology used to investigate embedding-level parameter-efficient fine-tuning for BERT-based passage re-ranking. The objective is to evaluate whether selected embeddings can serve as compact adaptation points for MonoBERT-style Information Retrieval, and to compare this strategy against attention-level adaptation, LoRA, and full fine-tuning.
+
+The methodology follows the motivation of the thesis. First, the Light-MonoT5 prompt-embedding idea is transferred to the BERT cross-encoder setting. Second, a BERT-to-MonoBERT parameter-change analysis is used to identify which embeddings and internal matrices exhibit the largest changes during IR adaptation. Third, controlled training approaches are defined, ranging from extremely small embedding-level updates to full model fine-tuning.
+
+\section{Task Definition}
+\label{sec:methodology_task}
+
+The task considered in this thesis is passage re-ranking. Given a query $q$, an initial retrieval stage provides a set of candidate passages:
+
+\begin{equation}
+    C_q = \{d_1,d_2,\ldots,d_k\}.
+\end{equation}
+
+The re-ranker assigns a relevance score to each query-passage pair:
+
+\begin{equation}
+    s_i = f_\theta(q,d_i),
+\end{equation}
+
+and the candidate set is sorted according to decreasing score:
+
+\begin{equation}
+    \pi_q = \operatorname{rank}_{d_i \in C_q} s_i.
+\end{equation}
+
+The models investigated in this thesis are not first-stage retrieval systems. They do not retrieve documents from the complete corpus. Instead, they operate on an existing candidate set and attempt to improve the ranking order. This setting matches the typical use case of cross-encoder re-rankers, which provide stronger relevance estimation at a higher computational cost.
+
+\section{Base Model}
+\label{sec:methodology_base_model}
+
+The base neural architecture is \texttt{bert-large-uncased}, used as a sequence classification cross-encoder. BERT-large contains 24 Transformer encoder layers, a hidden dimension of 1024, and 16 attention heads. The complete model contains approximately 335 million parameters.
+
+For passage re-ranking, the query and passage are concatenated into a single BERT input sequence:
+
+\begin{equation}
+    x = \texttt{[CLS]} \oplus q \oplus \texttt{[SEP]} \oplus d \oplus \texttt{[SEP]}.
+\end{equation}
+
+The final contextual representation of the \texttt{[CLS]} token is passed to a classification head. The model outputs two logits corresponding to non-relevant and relevant classes. During evaluation, the relevance-class logit is used as the ranking score.
+
+This architecture follows the MonoBERT passage re-ranking formulation \cite{nogueira2019passage}. Since the final prediction depends on the contextual representation of \texttt{[CLS]}, and query-passage interaction occurs throughout the Transformer layers, it provides a suitable setting for studying where task-specific adaptation occurs.
+
+\section{From Light-MonoT5 to MonoBERT}
+\label{sec:methodology_light_monot5_transfer}
+
+The initial motivation of this thesis comes from Light-MonoT5, which investigates whether a MonoT5 model can be adapted by updating only selected prompt-token embeddings while keeping the remaining parameters frozen \cite{braga2025monot5}. The key idea is that a small subset of parameters may contain sufficient capacity for task adaptation.
+
+This thesis investigates whether a similar principle can be transferred to BERT-based passage re-ranking. However, MonoT5 and MonoBERT differ architecturally. MonoT5 is a sequence-to-sequence model where prompt tokens influence the generated output sequence, whereas MonoBERT is a cross-encoder where relevance is predicted from the final contextual representation of the input sequence.
+
+Therefore, the closest BERT equivalent to prompt-token adaptation is to update embeddings associated with structural tokens that appear in every query-passage input. The two selected tokens are:
+
+\begin{itemize}
+    \item \texttt{[CLS]}, whose contextual representation is used by the classification head;
+    \item \texttt{[SEP]}, which separates the query and passage segments.
+\end{itemize}
+
+The first proposed experiment therefore trains only the embeddings of \texttt{[CLS]} and \texttt{[SEP]}. This provides a direct test of whether a highly restricted embedding-level update can adapt a frozen MonoBERT-style model.
+
+\section{Training Data Construction}
+\label{sec:methodology_training_data}
+
+All trainable neural approaches are trained using MS MARCO passage ranking triples. Each training example contains a query $q$, a relevant passage $d^+$, and a non-relevant passage $d^-$. The triples are converted into binary classification examples:
+
+\begin{align}
+    (q,d^+) &\rightarrow 1, \\
+    (q,d^-) &\rightarrow 0.
+\end{align}
+
+The model is optimized using cross-entropy loss over the two relevance classes. Each example follows the standard MonoBERT input format:
+
+\begin{equation}
+    \texttt{[CLS]} \; q \; \texttt{[SEP]} \; d \; \texttt{[SEP]}.
+\end{equation}
+
+The maximum sequence length is set to 128 tokens. When truncation is required, it is applied to the passage side while preserving the query tokens whenever possible.
+
+\section{Parameter-Change Analysis}
+\label{sec:methodology_parameter_change}
+
+Before defining the restricted adaptation approaches, a parameter-change analysis is performed between a pre-trained BERT model and a MonoBERT-style fine-tuned model. The goal is to identify which parts of the model undergo the largest changes during adaptation to passage re-ranking.
+
+This analysis is motivated by the observation that parameter differences between a general model and a task-adapted model may reveal useful adaptation targets. The resulting parameter differences are used to select embedding rows and attention matrices for additional experiments.
+
+For a matrix-valued parameter $W$, the parameter difference is defined as:
+
+\begin{equation}
+    \Delta W = W_{\text{MonoBERT}} - W_{\text{BERT}}.
+\end{equation}
+
+The Frobenius norm is used to measure the overall magnitude of change:
+
+\begin{equation}
+    \|\Delta W\|_F =
+    \sqrt{
+    \sum_i \sum_j (\Delta W_{ij})^2
+    }.
+\end{equation}
+
+Since the Frobenius norm is influenced by matrix size, the maximum absolute change is also considered:
+
+\begin{equation}
+    \|\Delta W\|_{\max}
+    =
+    \max_{i,j} |\Delta W_{ij}|.
+\end{equation}
+
+For embedding parameters, the analysis is performed at the token level. Given an embedding vector before and after fine-tuning:
+
+\begin{equation}
+    e_i^{(0)}, e_i^{(1)},
+\end{equation}
+
+the Euclidean distance is calculated as:
+
+\begin{equation}
+    d_i =
+    \|e_i^{(1)}-e_i^{(0)}\|_2.
+\end{equation}
+
+Cosine similarity is additionally measured to compare changes in embedding direction:
+
+\begin{equation}
+    \operatorname{cos}(e_i^{(0)},e_i^{(1)})
+    =
+    \frac{
+    e_i^{(0)} \cdot e_i^{(1)}
+    }{
+    \|e_i^{(0)}\|_2
+    \|e_i^{(1)}\|_2
+    }.
+\end{equation}
+
+The results of this analysis, including the specific embedding rows and attention matrices identified as adaptation targets, are presented in Section~\ref{sec:results_parameter_change} alongside the other experimental results.
+
+
+\section{Embedding-Level Gradient Masking}
+\label{sec:methodology_gradient_masking}
+
+Embedding-level approaches are implemented using gradient masking. Let:
+
+\begin{equation}
+    E \in \mathbb{R}^{|V| \times h}
+\end{equation}
+
+represent the BERT embedding matrix, where $|V|$ is the vocabulary size and $h=1024$ is the hidden dimension.
+
+A binary mask $M$ with the same dimensions as $E$ is created. Rows corresponding to selected token IDs are assigned a value of 1, while all other rows are assigned 0. During optimization, the embedding gradient is modified as:
+
+\begin{equation}
+    G' = G \odot M,
+\end{equation}
+
+where $G$ is the original gradient and $\odot$ represents element-wise multiplication.
+
+This ensures that only selected embedding rows receive updates. All remaining parameters are frozen. After training, the embedding matrix is compared with the initial matrix to verify that only the intended rows changed.
+
+For example, in the \texttt{[CLS]}/\texttt{[SEP]} experiment, only token IDs 101 and 102 should be modified. In the all-embeddings-except-\texttt{[CLS]}/\texttt{[SEP]} experiment, these rows should remain unchanged.
+
+\section{Compared Approaches}
+\label{sec:methodology_compared_approaches}
+
+The thesis evaluates ten approaches. These approaches are designed to compare different adaptation locations and parameter budgets.
+
+\subsection{BM25}
+\label{subsec:methodology_bm25}
+
+BM25 is used as the lexical retrieval baseline. It does not perform neural re-ranking. For DL-Hard, BM25 is additionally used to generate the top-1000 candidate passages that are subsequently re-ranked by neural models.
+
+\subsection{Public MonoBERT}
+\label{subsec:methodology_public_monobert}
+
+A publicly available MonoBERT checkpoint is evaluated using the same candidate sets and evaluation pipeline as the other neural models. This provides a reference point for comparing the locally trained models and restricted adaptation methods.
+
+\subsection{CLS/SEP Embedding Tuning}
+\label{subsec:methodology_cls_sep}
+
+The first embedding-level experiment updates only the embeddings of \texttt{[CLS]} and \texttt{[SEP]}. For \texttt{bert-large-uncased}, these token IDs are:
+
+\begin{itemize}
+    \item \texttt{[CLS]}: 101;
+    \item \texttt{[SEP]}: 102.
+\end{itemize}
+
+Since each embedding vector has dimension 1024, the number of trainable parameters is:
+
+\begin{equation}
+    2 \times 1024 = 2048.
+\end{equation}
+
+All other model parameters remain frozen.
+
+\subsection{Top-6 Embedding Tuning}
+\label{subsec:methodology_top6}
+
+This approach updates the six vocabulary embedding rows with the largest measured changes between BERT and MonoBERT, identified in Section~\ref{sec:results_parameter_change}:
+
+\begin{equation}
+    \{1000, 2133, 29649, 29658, 29645, 21932\}.
+\end{equation}
+
+The maximum number of trainable parameters is:
+
+\begin{equation}
+    6 \times 1024 = 6144.
+\end{equation}
+
+This experiment evaluates whether the largest embedding changes contain useful adaptation information.
+
+\subsection{Top-3 Attention Matrix Tuning}
+\label{subsec:methodology_top3_attention}
+
+This approach directly trains the three attention matrices identified by the parameter-change analysis, presented in Section~\ref{sec:results_parameter_change}:
+
+\begin{itemize}
+    \item \texttt{bert.encoder.layer.23.attention.output.dense.weight};
+    \item \texttt{bert.encoder.layer.22.attention.output.dense.weight};
+    \item \texttt{bert.encoder.layer.23.attention.self.query.weight}.
+\end{itemize}
+
+Each matrix has dimensions $1024 \times 1024$, resulting in:
+
+\begin{equation}
+    3 \times 1024 \times 1024
+    =
+    3,145,728
+\end{equation}
+
+trainable parameters.
+
+Although larger than embedding-only methods, this represents less than 1\% of the complete BERT-large parameter count.
+
+\subsection{All Embeddings}
+\label{subsec:methodology_all_embeddings}
+
+This experiment trains the complete word embedding matrix while keeping the Transformer layers and classification head frozen. It evaluates whether embedding-level adaptation becomes effective when the complete input representation space is allowed to change.
+
+\subsection{All Embeddings Except CLS/SEP}
+\label{subsec:methodology_all_except_cls_sep}
+
+This experiment trains all vocabulary embeddings except the structural tokens:
+
+\begin{equation}
+    S =
+    \{1,\ldots,|V|\}
+    \setminus
+    \{101,102\}.
+\end{equation}
+
+The purpose is to compare general vocabulary embedding adaptation against structural-token adaptation.
+
+\subsection{LoRA on All Attention Matrices}
+\label{subsec:methodology_lora_all}
+
+LoRA is applied to all attention projection matrices. For a frozen weight matrix $W_0$, LoRA defines the adapted matrix as:
+
+\begin{equation}
+    W = W_0 + BA,
+\end{equation}
+
+where $A$ and $B$ are trainable low-rank matrices.
+
+The LoRA configuration uses rank 8, scaling factor 16, and dropout 0.05. The total number of trainable parameters is 1,572,864.
+
+\subsection{LoRA on the Top-3 Attention Matrices}
+\label{subsec:methodology_lora_top3}
+
+This approach applies LoRA adapters only to the three attention matrices selected through the parameter-change analysis. With rank 8, this results in 49,152 trainable parameters.
+
+This experiment evaluates whether parameter-change analysis can guide adapter placement and reduce the number of trainable parameters while maintaining ranking effectiveness.
+
+\section{Full MonoBERT}
+\label{subsec:methodology_full_monobert}
+
+Full MonoBERT fine-tuning updates all parameters of \texttt{bert-large-uncased}. This experiment provides an upper-bound reference for adaptation effectiveness and verifies that the local training and evaluation pipeline produces results comparable to a standard MonoBERT-style model.
+
+\section{Training Configuration}
+\label{sec:methodology_training_configuration}
+
+The main training configuration is shown in Table~\ref{tab:methodology_training_config}.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{Setting} & \textbf{Value} \\
+\hline
+Base model & \texttt{bert-large-uncased} \\
+Training data & \texttt{msmarco-passage/train/triples-small} \\
+Training steps & 100,000 \\
+Maximum sequence length & 128 \\
+Effective batch size & 128 \\
+Warmup steps & 10,000 \\
+Optimizer & AdamW \\
+Precision & Mixed precision \\
+Checkpoint interval & 10,000 steps \\
+\hline
+\end{tabular}
+\caption{Main training configuration used for the experiments.}
+\label{tab:methodology_training_config}
+\end{table}
+
+Most parameter-efficient experiments use a micro-batch size of 16 with gradient accumulation over 8 steps, resulting in an effective batch size of 128. Full MonoBERT fine-tuning uses a micro-batch size of 8 with gradient accumulation over 16 steps, also resulting in an effective batch size of 128.
+
+The maximum sequence length is limited to 128 tokens due to computational constraints. Passage truncation is applied when necessary while preserving query tokens whenever possible.
+
+\section{Evaluation Protocol}
+\label{sec:methodology_evaluation_protocol}
+
+All neural models are evaluated as cross-encoder re-rankers. For each query, the model scores the available candidate passages independently. The relevance-class logit produced by the classification head is used as the ranking score.
+
+The candidates are sorted according to decreasing score, and ranking metrics are computed from the resulting ranked lists.
+
+The evaluation datasets are:
+
+\begin{itemize}
+    \item \texttt{msmarco-passage/trec-dl-2019/judged};
+    \item \texttt{msmarco-passage/trec-dl-2020/judged};
+    \item \texttt{msmarco-passage/dev/small};
+    \item \texttt{msmarco-passage/trec-dl-hard}.
+\end{itemize}
+
+The reported evaluation metrics are:
+
+\begin{itemize}
+    \item nDCG@10;
+    \item MRR@10;
+    \item MAP@1000;
+    \item Recall@100.
+\end{itemize}
+
+The same evaluation pipeline is used for all neural approaches to ensure that differences in ranking performance are caused by the adaptation method rather than differences in candidate scoring procedures.
+
+\section{Summary}
+\label{sec:methodology_summary}
+
+This methodology investigates whether highly restricted parameter updates can effectively adapt a BERT-based passage re-ranker. The embedding-level experiments evaluate whether the Light-MonoT5 prompt-embedding idea can transfer to BERT structural tokens and selected vocabulary embeddings. The parameter-change analysis identifies potentially important adaptation locations, which are tested through direct attention-matrix tuning and targeted LoRA placement.
+
+The experiments compare adaptation strategies across different parameter budgets, including embedding-only tuning, attention-level tuning, LoRA-based adaptation, and full fine-tuning. This provides a controlled analysis of which model components contribute most to effective MonoBERT adaptation.

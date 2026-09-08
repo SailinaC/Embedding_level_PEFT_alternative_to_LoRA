@@ -1,0 +1,14 @@
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\begin{sloppypar}
+
+Neural re-ranking models based on pre-trained transformers have achieved strong performance in Information Retrieval. In particular, BERT-based cross-encoders such as MonoBERT improve passage ranking by jointly encoding queries and candidate passages. However, full fine-tuning of BERT-large requires updating hundreds of millions of parameters, resulting in high computational, memory, and storage costs.
+
+This thesis investigates embedding-level Parameter-Efficient Fine-Tuning (PEFT), a family of methods that freeze most of a pre-trained model's parameters and update only a small subset, for neural passage re-ranking, and studies whether selected embedding parameters can serve as compact adaptation targets compared with established PEFT methods such as LoRA. The work is motivated by Light-MonoT5, which shows that MonoT5 can be adapted by training only selected prompt-token embeddings while keeping the remaining model parameters frozen. This idea is transferred to a MonoBERT-style cross-encoder by restricting training to selected BERT embeddings, beginning with the structural tokens \texttt{[CLS]} and \texttt{[SEP]}.
+
+The thesis compares this embedding-level approach against a range of alternatives at different parameter budgets, including selected attention-matrix tuning, LoRA applied at different scales, and full MonoBERT fine-tuning, with BM25 and a publicly available MonoBERT checkpoint included as reference baselines. Experiments are conducted using MS MARCO passage ranking data and evaluated on TREC DL 2019, TREC DL 2020, MS MARCO Dev Small, and DL-Hard.
+
+The results show that embedding-level fine-tuning provides extreme parameter efficiency but limited ranking effectiveness compared with attention-based adaptation. LoRA applied to all attention matrices achieves performance close to publicly available MonoBERT and full fine-tuning, while LoRA applied only to the most changed attention matrices provides a strong restricted PEFT approach. Overall, the findings indicate that structural embedding tuning provides insight into model adaptation behaviour, but is not sufficient as a replacement for attention-level adaptation in BERT-based passage re-ranking.
+\keywords{Information Retrieval, Passage Re-ranking, BERT, MonoBERT, MonoT5, Parameter-Efficient Fine-Tuning, LoRA, Embedding-Level Adaptation}
+
+\end{sloppypar}
